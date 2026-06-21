@@ -3,7 +3,7 @@ import {
     NavLink as ENavLink,
     type NavLinkProps as ENavLinkProps,
 } from "react-router";
-import styles from "./nav-link.module.css";
+import styles from "./nav-link.module.scss";
 
 type NavLinkProps = ENavLinkProps;
 

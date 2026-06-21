@@ -1,6 +1,6 @@
 import { Button, Drawer } from "antd";
 import { useState } from "react";
-import { NavLink } from "../../components/nav-link/nav-link";
+import { NavLink } from "../../components/nav-link";
 import { Outlet } from "react-router";
 
 export const NavMenu = () => {
