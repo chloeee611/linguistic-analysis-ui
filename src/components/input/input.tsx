@@ -1,12 +1,14 @@
-import type { ComponentPropsWithRef, FC } from "react";
+import { Input as EInput, type InputProps as EInputProps } from "antd";
+import type { FC } from "react";
+
 import styles from "./input.module.scss";
 
-type InputProps = ComponentPropsWithRef<"input">;
+type InputProps = EInputProps;
 
 export const Input: FC<InputProps> = ({ children, ...rest }) => {
     return (
-        <input className={styles.form} {...rest}>
+        <EInput className={styles.input} {...rest}>
             {children}
-        </input>
+        </EInput>
     );
 };

@@ -5,7 +5,7 @@ type LabelProps = ComponentPropsWithRef<"label">;
 
 export const Label: FC<LabelProps> = ({ children, ...rest }) => {
     return (
-        <label className={styles.form} {...rest}>
+        <label className={styles.label} {...rest}>
             {children}
         </label>
     );
