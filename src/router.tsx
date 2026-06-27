@@ -1,4 +1,4 @@
-import { Count, Dashboard, Transcript } from "./pages/analysis";
+import { Count, Dashboard, Projects } from "./pages/analysis";
 // import { useState, useEffect } from "react";
 import { Route, Routes } from "react-router";
 import { Register } from "./pages/register/register";
@@ -37,10 +37,7 @@ function Router() {
             <Route path="analysis" element={<NavMenu />}>
                 <Route index element={<Dashboard />} />
                 <Route path="count" element={<Count />} />
-                <Route
-                    path="transcript/:transcriptId"
-                    element={<Transcript />}
-                />
+                <Route path="projects" element={<Projects />} />
             </Route>
         </Routes>
     );

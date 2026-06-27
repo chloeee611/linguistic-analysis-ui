@@ -1,5 +1,7 @@
 import type { SubmitEvent } from "react";
-import type { UserJWT } from "../../model/user.types";
+import type { User, UserJWT } from "../../model/user.types";
+
+import { parseFormData } from "../../helpers/form.helpers";
 import { useNavigate } from "react-router";
 import { Button } from "../../components/button";
 import { Input } from "../../components/input";
@@ -13,9 +15,7 @@ export const Login = () => {
     const callLogin = async (event: SubmitEvent) => {
         try {
             event.preventDefault();
-            const formObject = Object.fromEntries(
-                new FormData(event.target).entries(),
-            );
+            const formObject = parseFormData<User>(event);
             const { data } = await api.post<UserJWT>("/login", formObject);
             localStorage.setItem("token", data.token);
 
