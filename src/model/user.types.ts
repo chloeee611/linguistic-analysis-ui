@@ -10,9 +10,3 @@ export type UserJWT = {
     id: string;
     token: string;
 };
-
-export type Project = {
-    userId: string;
-    title: string;
-    description: string;
-};
