@@ -9,6 +9,7 @@ import { api } from "../../../api/api";
 
 export const Projects = () => {
     const [projects, setProjects] = useState<Project[]>([]);
+    const [wordCount, setWordCount] = useState(null);
 
     const callCreateProject = async (event: SubmitEvent) => {
         try {
@@ -47,6 +48,27 @@ export const Projects = () => {
         loadProjects();
     }, []);
 
+    const analyseWordCount = async (transcriptName: string) => {
+        const token = localStorage.getItem("token");
+        const { data } = await api.post(
+            `analysis/frequency/${transcriptName}`,
+            {},
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            },
+        );
+        return data;
+    };
+
+    const callAnalyseWordCount = async (transcriptName: string) => {
+        try {
+            const result = await analyseWordCount(transcriptName);
+            setWordCount(result.wordCount);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <div>
             <h1>Projects</h1>
@@ -69,6 +91,13 @@ export const Projects = () => {
                     <p>{project.description}</p>
                 </div>
             ))}
+
+            <h3>Results</h3>
+            <p>Word count: {wordCount}</p>
+            {/* TODO: change the hardcoded transcript name */}
+            <Button onClick={() => callAnalyseWordCount("010920.cha")}>
+                Analyse Word Count
+            </Button>
 
             <Input name="uploaded_file" type="file" />
         </div>
