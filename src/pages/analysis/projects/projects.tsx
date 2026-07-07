@@ -1,6 +1,7 @@
 import { useEffect, useState, type SubmitEvent } from "react";
 import { parseFormData } from "../../../helpers/form.helpers";
-import type { NewProject, Project } from "../../../model/project.types";
+import type { Project } from "../../../model/project.types";
+import { useNavigate } from "react-router";
 import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 import { Label } from "../../../components/label";
@@ -8,13 +9,15 @@ import { Form } from "../../../components/form";
 import { api } from "../../../api/api";
 
 export const Projects = () => {
+    const navigate = useNavigate();
+
     const [projects, setProjects] = useState<Project[]>([]);
     const [wordCount, setWordCount] = useState(null);
 
     const callCreateProject = async (event: SubmitEvent) => {
         try {
             const token = localStorage.getItem("token");
-            const formObject = parseFormData<NewProject>(event);
+            const formObject = parseFormData<Project>(event);
             const { status } = await api.post("/projects", formObject, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -89,6 +92,14 @@ export const Projects = () => {
                     <h3>{project.title}</h3>
 
                     <p>{project.description}</p>
+
+                    <Button
+                        onClick={() =>
+                            navigate(`/analysis/projects/${project.id}`)
+                        }
+                    >
+                        View Details
+                    </Button>
                 </div>
             ))}
 
