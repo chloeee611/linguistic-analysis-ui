@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { Transcript } from "../../../model/transcript.types";
 import type { Project } from "../../../model/project.types";
 import { useParams } from "react-router";
 import { api } from "../../../api/api";
@@ -7,6 +8,7 @@ export const ProjectDetails = () => {
     const { projectId } = useParams();
 
     const [project, setProject] = useState<Project>();
+    const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
     const getProject = async () => {
         const token = localStorage.getItem("token");
@@ -16,10 +18,31 @@ export const ProjectDetails = () => {
         return data;
     };
 
+    const getTranscript = async () => {
+        try {
+            console.log("getTranscript called");
+            console.log("projectId:", projectId);
+            const token = localStorage.getItem("token");
+            const { data } = await api.get<Transcript[]>(
+                `/transcripts/project/${projectId}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                },
+            );
+            return data;
+        } catch (error) {
+            console.error("Failed to request transcript", error);
+            throw error;
+        }
+    };
+
     useEffect(() => {
         const loadProject = async () => {
-            const data = await getProject();
-            setProject(data);
+            const projectData = await getProject();
+            setProject(projectData);
+
+            const transcriptData = await getTranscript();
+            setTranscripts(transcriptData);
         };
 
         loadProject();
@@ -31,6 +54,9 @@ export const ProjectDetails = () => {
             <h2>{project?.title}</h2>
             <p>{project?.description}</p>
             <h3>Transcripts</h3>
+            {transcripts.map((transcript) => (
+                <div key={transcript.id}>{transcript.file_url}</div>
+            ))}
         </div>
     );
 };
