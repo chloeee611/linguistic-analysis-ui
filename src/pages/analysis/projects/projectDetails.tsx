@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import type { Transcript } from "../../../model/transcript.types";
 import type { Project } from "../../../model/project.types";
 import { useParams } from "react-router";
 import { api } from "../../../api/api";
+import { Input } from "../../../components/input";
+import { Form } from "../../../components/form";
+import { Button } from "../../../components/button";
 
 export const ProjectDetails = () => {
     const { projectId } = useParams();
 
     const [project, setProject] = useState<Project>();
     const [transcripts, setTranscripts] = useState<Transcript[]>([]);
+    const [selectedFile, setSelectedFile] = useState<File>();
 
     const getProject = async () => {
         const token = localStorage.getItem("token");
@@ -48,6 +52,31 @@ export const ProjectDetails = () => {
         loadProject();
     }, []);
 
+    const callUploadTranscript = async (event: SubmitEvent) => {
+        event.preventDefault(); // Stop page from refreshing
+
+        if (!selectedFile) {
+            console.error("Error with selected file");
+            return;
+        }
+
+        if (!projectId) {
+            console.error("Error with project ID");
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append("uploaded_file", selectedFile);
+        formData.append("projectId", projectId);
+
+        const token = localStorage.getItem("token");
+        const { data } = await api.post("/transcripts", formData, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return data;
+    };
+
     return (
         <div>
             <h1>Project {projectId} Details</h1>
@@ -57,6 +86,20 @@ export const ProjectDetails = () => {
             {transcripts.map((transcript) => (
                 <div key={transcript.id}>{transcript.file_url}</div>
             ))}
+
+            <Form onSubmit={callUploadTranscript}>
+                <Input
+                    name="uploaded_file"
+                    type="file"
+                    onChange={(event) =>
+                        setSelectedFile(event.target.files?.[0])
+                    }
+                />
+                <p>Selected file: {selectedFile?.name}</p>
+                <Button htmlType="submit" type="primary">
+                    Upload Transcript
+                </Button>
+            </Form>
         </div>
     );
 };

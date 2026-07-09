@@ -109,8 +109,6 @@ export const Projects = () => {
             <Button onClick={() => callAnalyseWordCount("010920.cha")}>
                 Analyse Word Count
             </Button>
-
-            <Input name="uploaded_file" type="file" />
         </div>
     );
 };
