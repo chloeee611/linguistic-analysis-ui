@@ -12,7 +12,6 @@ export const ProjectDetails = () => {
 
     const [project, setProject] = useState<Project>();
     const [transcripts, setTranscripts] = useState<Transcript[]>([]);
-    const [selectedFile, setSelectedFile] = useState<File>();
 
     const getProject = async () => {
         const token = localStorage.getItem("token");
@@ -55,24 +54,20 @@ export const ProjectDetails = () => {
     const callUploadTranscript = async (event: SubmitEvent) => {
         event.preventDefault(); // Stop page from refreshing
 
-        if (!selectedFile) {
-            console.error("Error with selected file");
-            return;
-        }
-
         if (!projectId) {
             console.error("Error with project ID");
             return;
         }
 
-        const formData = new FormData();
-
-        formData.append("uploaded_file", selectedFile);
+        const formData = new FormData(event.target);
         formData.append("projectId", projectId);
 
         const token = localStorage.getItem("token");
         const { data } = await api.post("/transcripts", formData, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "content-type": "multipart/form-data",
+            },
         });
         return data;
     };
@@ -88,14 +83,7 @@ export const ProjectDetails = () => {
             ))}
 
             <Form onSubmit={callUploadTranscript}>
-                <Input
-                    name="uploaded_file"
-                    type="file"
-                    onChange={(event) =>
-                        setSelectedFile(event.target.files?.[0])
-                    }
-                />
-                <p>Selected file: {selectedFile?.name}</p>
+                <Input name="uploaded_file" type="file" />
                 <Button htmlType="submit" type="primary">
                     Upload Transcript
                 </Button>
