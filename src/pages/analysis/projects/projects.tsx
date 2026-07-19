@@ -2,6 +2,8 @@ import { useEffect, useState, type SubmitEvent } from "react";
 import { parseFormData } from "../../../helpers/form.helpers";
 import type { Project } from "../../../model/project.types";
 import { useNavigate } from "react-router";
+import { Paragraph } from "../../../components/paragraph";
+import { Heading } from "../../../components/heading";
 import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 import { Label } from "../../../components/label";
@@ -74,7 +76,7 @@ export const Projects = () => {
 
     return (
         <div>
-            <h1>Projects</h1>
+            <Heading>Projects</Heading>
 
             <Form onSubmit={callCreateProject}>
                 <Label>Title</Label>
@@ -89,9 +91,9 @@ export const Projects = () => {
             {/* TODO: create separate component for this */}
             {projects.map((project) => (
                 <div key={project.id}>
-                    <h3>{project.title}</h3>
+                    <Paragraph>{project.title}</Paragraph>
 
-                    <p>{project.description}</p>
+                    <Paragraph>{project.description}</Paragraph>
 
                     <Button
                         onClick={() =>
@@ -104,7 +106,7 @@ export const Projects = () => {
             ))}
 
             <h3>Results</h3>
-            <p>Word count: {wordCount}</p>
+            <Paragraph>Word count: {wordCount}</Paragraph>
             {/* TODO: change the hardcoded transcript name */}
             <Button onClick={() => callAnalyseWordCount("010920.cha")}>
                 Analyse Word Count

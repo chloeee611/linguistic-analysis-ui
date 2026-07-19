@@ -1,11 +1,13 @@
 import { useEffect, useState, type SubmitEvent } from "react";
 import type { Transcript } from "../../../model/transcript.types";
 import type { Project } from "../../../model/project.types";
+import { Paragraph } from "../../../components/paragraph";
 import { useParams } from "react-router";
-import { api } from "../../../api/api";
+import { Heading } from "../../../components/heading";
+import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 import { Form } from "../../../components/form";
-import { Button } from "../../../components/button";
+import { api } from "../../../api/api";
 
 export const ProjectDetails = () => {
     const { projectId } = useParams();
@@ -74,10 +76,10 @@ export const ProjectDetails = () => {
 
     return (
         <div>
-            <h1>Project {projectId} Details</h1>
-            <h2>{project?.title}</h2>
-            <p>{project?.description}</p>
-            <h3>Transcripts</h3>
+            <Heading>Project {projectId} Details</Heading>
+            <Paragraph>{project?.title}</Paragraph>
+            <Paragraph>{project?.description}</Paragraph>
+            <Heading>Transcripts</Heading>
             {transcripts.map((transcript) => (
                 <div key={transcript.id}>{transcript.file_url}</div>
             ))}
