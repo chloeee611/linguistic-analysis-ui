@@ -1,8 +1,8 @@
-import { useEffect, useState, type SubmitEvent } from "react";
-import type { Transcript } from "../../../model/transcript.types";
-import type { Project } from "../../../model/project.types";
+import { useCallback, useEffect, useState, type SubmitEvent } from "react";
+import { Transcript } from "../../../model/transcript.types";
 import { Paragraph } from "../../../components/paragraph";
 import { useParams } from "react-router";
+import { Project } from "../../../model/project.types";
 import { Heading } from "../../../components/heading";
 import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
@@ -15,15 +15,15 @@ export const ProjectDetails = () => {
     const [project, setProject] = useState<Project>();
     const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
-    const getProject = async () => {
+    const getProject = useCallback(async () => {
         const token = localStorage.getItem("token");
         const { data } = await api.get<Project>(`/projects/${projectId}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return data;
-    };
+    }, [projectId]);
 
-    const getTranscript = async () => {
+    const getTranscript = useCallback(async () => {
         try {
             console.log("getTranscript called");
             console.log("projectId:", projectId);
@@ -39,7 +39,7 @@ export const ProjectDetails = () => {
             console.error("Failed to request transcript", error);
             throw error;
         }
-    };
+    }, [projectId]);
 
     useEffect(() => {
         const loadProject = async () => {
@@ -51,7 +51,7 @@ export const ProjectDetails = () => {
         };
 
         loadProject();
-    }, []);
+    }, [getProject, getTranscript]);
 
     const callUploadTranscript = async (event: SubmitEvent) => {
         event.preventDefault(); // Stop page from refreshing

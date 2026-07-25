@@ -1,0 +1,51 @@
+.pageContainer {
+    height: 100vh;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 0.15fr 0.85fr;
+}
+
+.pageContainerCollapsed {
+    grid-template-columns: 0.05fr 0.95fr;
+}
+
+.navMenuContainer {
+    grid-column: 1;
+    background-color: #222124;
+    padding: 20px;
+}
+
+.logo {
+    display: flex;
+    font-size: 36px;
+    color: white;
+    padding: 60px 0;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+.navMenu {
+    background-color: #222124;
+}
+
+.contentPadding {
+    background-color: #222124;
+    padding: 10px;
+    overflow: auto;
+}
+
+.content {
+    background-color: #e1e1e1;
+    display: flex;
+    grid-column: 2;
+    border-radius: 40px;
+    height: 100%;
+    overflow-y: auto;
+}

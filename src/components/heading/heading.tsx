@@ -1,4 +1,5 @@
 import type { ComponentPropsWithRef, FC } from "react";
+
 import styles from "./heading.module.scss";
 
 type HeadingProps = ComponentPropsWithRef<"h1">;

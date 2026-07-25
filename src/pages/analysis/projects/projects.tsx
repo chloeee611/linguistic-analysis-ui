@@ -1,8 +1,8 @@
-import { useEffect, useState, type SubmitEvent } from "react";
+import { useCallback, useEffect, useState, type SubmitEvent } from "react";
 import { parseFormData } from "../../../helpers/form.helpers";
-import type { Project } from "../../../model/project.types";
 import { useNavigate } from "react-router";
 import { Paragraph } from "../../../components/paragraph";
+import { Project } from "../../../model/project.types";
 import { Heading } from "../../../components/heading";
 import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
@@ -11,10 +11,10 @@ import { Form } from "../../../components/form";
 import { api } from "../../../api/api";
 
 export const Projects = () => {
-    const navigate = useNavigate();
-
     const [projects, setProjects] = useState<Project[]>([]);
     const [wordCount, setWordCount] = useState(null);
+
+    const navigate = useNavigate();
 
     const callCreateProject = async (event: SubmitEvent) => {
         try {
@@ -36,22 +36,24 @@ export const Projects = () => {
         }
     };
 
-    const getAllProjects = async () => {
+    const loadProjects = useCallback(async () => {
         const token = localStorage.getItem("token");
-        const { data } = await api.get<Project[]>("/projects", {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        return data;
-    };
 
-    const loadProjects = async () => {
-        const data = await getAllProjects();
-        setProjects(data);
-    };
+        try {
+            const { data } = await api.get<Project[]>("/projects", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            setProjects(data);
+        } catch {
+            navigate("/login");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         loadProjects();
-    }, []);
+    }, [loadProjects]);
 
     const analyseWordCount = async (transcriptName: string) => {
         const token = localStorage.getItem("token");
