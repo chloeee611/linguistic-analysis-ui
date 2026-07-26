@@ -1,2 +1,2 @@
-export { Projects } from "./projects";
-export { ProjectDetails } from "./projectDetails";
+export { Projects } from "./listing/projects";
+export { ProjectDetails } from "./details/projectDetails";

@@ -8,6 +8,7 @@ import { Login } from "./pages/login/login";
 // import { api } from "./api/api";
 
 import "./App.css";
+import { CreateEditProject } from "./pages/analysis/projects/create-edit/create-edit-project";
 
 function Router() {
     // const [users, setUsers] = useState<string[]>([]);
@@ -38,6 +39,7 @@ function Router() {
                 <Route index element={<Dashboard />} />
                 <Route path="count" element={<Count />} />
                 <Route path="projects" element={<Projects />} />
+                <Route path="projects/create" element={<CreateEditProject />} />
                 <Route
                     path="projects/:projectId"
                     element={<ProjectDetails />}
