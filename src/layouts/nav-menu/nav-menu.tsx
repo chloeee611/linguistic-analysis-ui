@@ -1,14 +1,15 @@
 import {
     CommentOutlined,
     FileTextOutlined,
+    FolderOpenOutlined,
     LogoutOutlined,
     PieChartOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import { Menu, type MenuProps } from "antd";
-import { useState } from "react";
 import { Outlet, useLocation } from "react-router";
-import { NavLink } from "../../components/nav-link";
+import { Menu, MenuProps } from "antd";
+import { useState } from "react";
+import { NavLink } from "@/components/nav-link";
 
 import styles from "./nav-menu.module.scss";
 import clsx from "clsx";
@@ -23,8 +24,13 @@ const items: MenuItem[] = [
     },
     {
         key: "/analysis/projects",
-        icon: <FileTextOutlined />,
+        icon: <FolderOpenOutlined />,
         label: <NavLink to="/analysis/projects">Projects</NavLink>,
+    },
+    {
+        key: "/analysis/transcripts",
+        icon: <FileTextOutlined />,
+        label: <NavLink to="/analysis/transcripts">Transcripts</NavLink>,
     },
     {
         key: "/profile",

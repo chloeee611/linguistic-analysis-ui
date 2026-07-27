@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState, type SubmitEvent } from "react";
-import { Transcript } from "../../../../model/transcript.types";
-import { Paragraph } from "../../../../components/paragraph";
+import { Transcript } from "@/model/transcript.types";
+import { Paragraph } from "@/components/paragraph";
 import { useParams } from "react-router";
-import { Heading } from "../../../../components/heading";
+import { Heading } from "@/components/heading";
 import { Project } from "@/model/project.types";
-import { Button } from "../../../../components/button";
-import { Input } from "../../../../components/input";
-import { Form } from "../../../../components/form";
-import { api } from "../../../../api/api";
+import { Button } from "@/components/button";
+import { Input } from "@/components/input";
+import { Form } from "@/components/form";
+import { api } from "@/api/api";
 
 export const ProjectDetails = () => {
     const { projectId } = useParams();
