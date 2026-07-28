@@ -3,7 +3,7 @@ import type { FC } from "react";
 
 import styles from "./input.module.scss";
 
-type InputProps = EInputProps;
+export type InputProps = EInputProps;
 
 export const Input: FC<InputProps> = ({ children, ...rest }) => {
     return (

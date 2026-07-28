@@ -18,19 +18,19 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 const items: MenuItem[] = [
     {
-        key: "/analysis",
+        key: "/",
         icon: <PieChartOutlined />,
-        label: <NavLink to="/analysis">Dashboard</NavLink>,
+        label: <NavLink to="/">Dashboard</NavLink>,
     },
     {
-        key: "/analysis/projects",
+        key: "/projects",
         icon: <FolderOpenOutlined />,
-        label: <NavLink to="/analysis/projects">Projects</NavLink>,
+        label: <NavLink to="/projects">Projects</NavLink>,
     },
     {
-        key: "/analysis/transcripts",
+        key: "/transcripts",
         icon: <FileTextOutlined />,
-        label: <NavLink to="/analysis/transcripts">Transcripts</NavLink>,
+        label: <NavLink to="/transcripts">Transcripts</NavLink>,
     },
     {
         key: "/profile",

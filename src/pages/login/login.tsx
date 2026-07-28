@@ -19,7 +19,7 @@ export const Login = () => {
             const { data } = await api.post<UserJWT>("/login", formObject);
             localStorage.setItem("token", data.token);
 
-            navigate("/analysis");
+            navigate("/");
         } catch (error) {
             console.error("Could not load users", error);
         }

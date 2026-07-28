@@ -2,7 +2,6 @@ import { useNavigate } from "react-router";
 import { SubmitEvent } from "react";
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/button";
-import { Input } from "@/components/input";
 import { Form } from "@/components/form";
 import { api } from "@/api/api";
 
@@ -25,7 +24,7 @@ export const UploadTranscripts = () => {
         });
 
         if (status === 200) {
-            navigate("/analysis/transcripts");
+            navigate("/transcripts");
         }
     };
 
@@ -34,7 +33,7 @@ export const UploadTranscripts = () => {
             <Heading>Upload Transcript</Heading>
 
             <Form onSubmit={callUploadTranscript}>
-                <Input
+                <input
                     name="uploaded_file"
                     type="file"
                     className={styles.uploadInput}

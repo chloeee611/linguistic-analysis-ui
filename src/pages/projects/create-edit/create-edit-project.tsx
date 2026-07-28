@@ -22,7 +22,7 @@ export const CreateEditProject = () => {
 
             if (status === 201) {
                 console.log("Project created successfully");
-                await navigate(`/analysis/projects/${data.id}`);
+                await navigate(`/projects/${data.id}`);
             }
 
             // TODO: return newly created project id, then navigate to new project page

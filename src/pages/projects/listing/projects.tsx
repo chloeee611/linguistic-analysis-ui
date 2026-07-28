@@ -5,10 +5,11 @@ import { Project } from "@/model/project.types";
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { api } from "@/api/api";
+import { api, handleError } from "@/api/api";
 
 import styles from "./projects.module.scss";
 import { NavLink } from "@/components/nav-link";
+import { AxiosError } from "axios";
 
 export const Projects = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -26,8 +27,8 @@ export const Projects = () => {
                 });
 
                 setProjects(data);
-            } catch {
-                navigate("/login");
+            } catch (err) {
+                handleError(err as AxiosError, navigate);
             }
         };
 
@@ -60,9 +61,7 @@ export const Projects = () => {
             <div className={styles.header}>
                 <Heading>Projects</Heading>
                 <Button>
-                    <NavLink to="/analysis/projects/create">
-                        Create Project
-                    </NavLink>
+                    <NavLink to="/projects/create">Create Project</NavLink>
                 </Button>
             </div>
 
@@ -73,7 +72,7 @@ export const Projects = () => {
                         key={id}
                         title={title}
                         className={styles.projectCard}
-                        onClick={() => navigate(`/analysis/projects/${id}`)}
+                        onClick={() => navigate(`/projects/${id}`)}
                     >
                         <Paragraph>{description}</Paragraph>
                     </Card>

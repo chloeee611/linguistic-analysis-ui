@@ -5,7 +5,6 @@ import { useParams } from "react-router";
 import { Heading } from "@/components/heading";
 import { Project } from "@/model/project.types";
 import { Button } from "@/components/button";
-import { Input } from "@/components/input";
 import { Form } from "@/components/form";
 import { api } from "@/api/api";
 
@@ -85,7 +84,7 @@ export const ProjectDetails = () => {
             ))}
 
             <Form onSubmit={callUploadTranscript}>
-                <Input name="uploaded_file" type="file" />
+                <input name="uploaded_file" type="file" />
                 <Button htmlType="submit" type="primary">
                     Upload Transcript
                 </Button>

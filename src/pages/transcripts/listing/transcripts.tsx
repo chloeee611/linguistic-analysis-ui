@@ -6,9 +6,10 @@ import { NavLink } from "@/components/nav-link";
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { api } from "@/api/api";
+import { api, handleError } from "@/api/api";
 
 import styles from "./transcripts.module.scss";
+import { AxiosError } from "axios";
 
 export const Transcripts = () => {
     const [transcripts, setTranscripts] = useState<Transcript[]>([]);
@@ -26,8 +27,7 @@ export const Transcripts = () => {
 
                 setTranscripts(data);
             } catch (err) {
-                console.log(err);
-                navigate("/login");
+                handleError(err as AxiosError, navigate);
             }
         };
 
@@ -39,7 +39,7 @@ export const Transcripts = () => {
             <div className={styles.header}>
                 <Heading>Transcripts</Heading>
                 <Button>
-                    <NavLink to="/analysis/transcripts/upload">Upload</NavLink>
+                    <NavLink to="/transcripts/upload">Upload</NavLink>
                 </Button>
             </div>
 
@@ -50,7 +50,7 @@ export const Transcripts = () => {
                         key={id}
                         title={title}
                         className={styles.card}
-                        onClick={() => navigate(`/analysis/transcripts/${id}`)}
+                        onClick={() => navigate(`/transcripts/${id}`)}
                     >
                         <Paragraph>{file_url}</Paragraph>
                     </Card>
