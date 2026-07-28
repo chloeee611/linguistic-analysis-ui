@@ -38,6 +38,16 @@ export const TranscriptDetails = () => {
         <div>
             <Heading>Transcript</Heading>
             {transcript && <div key={transcript.id}>{transcript.file_url}</div>}
+            {transcript?.metadata && (
+                <table>
+                    {Object.entries(transcript.metadata).map(([key, value]) => (
+                        <tr>
+                            <td>{key}</td>
+                            <td>{JSON.stringify(value)}</td>
+                        </tr>
+                    ))}
+                </table>
+            )}
         </div>
     );
 };

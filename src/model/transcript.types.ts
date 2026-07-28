@@ -3,4 +3,7 @@ export type Transcript = {
     project_id: number;
     title: string;
     file_url: string;
+    metadata: Record<string, unknown>;
 };
+
+// TODO: make TranscriptMetadata type
