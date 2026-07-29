@@ -14,5 +14,7 @@ export const handleError = (
 ) => {
     if (error.response?.status && error.response.status === 403) {
         callback("/login");
+    } else {
+        console.error(error);
     }
 };

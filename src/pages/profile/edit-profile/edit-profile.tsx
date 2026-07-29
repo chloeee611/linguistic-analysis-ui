@@ -1,33 +1,41 @@
 import { useEffect, useState } from "react";
+import { api, handleError } from "@/api/api";
 import { useNavigate } from "react-router";
+import { InputProps } from "@/components/input/input";
+import { AxiosError } from "axios";
+import { Button } from "@/components/button";
+import { Input } from "@/components/input";
 import { Label } from "@/components/label";
 import { User } from "@/model/user.types";
-import { api, handleError } from "@/api/api";
-import { AxiosError } from "axios";
+import { Form } from "@/components/form";
 
 import styles from "./edit-profile.module.scss";
-import { Input } from "@/components/input";
-import { InputProps } from "@/components/input/input";
 
 type Field = {
-    label: string;
     type: InputProps["type"];
-    disabled?: boolean;
+    label: string;
     property: keyof User;
+    disabled?: boolean;
+    required?: boolean;
 };
 
 const fields: Field[] = [
-    { label: "Name", property: "name", type: "text", disabled: true },
+    {
+        label: "Name",
+        property: "name",
+        type: "text",
+        disabled: true,
+    },
     { label: "Username", property: "username", type: "text", disabled: true },
     { label: "Email", property: "email", type: "email" },
     { label: "Date of birth", property: "dob", type: "date" },
     { label: "Bio", property: "bio", type: "text" },
-    { label: "Research Field", property: "researchField", type: "text" },
+    { label: "Research Field", property: "research_field", type: "text" },
     { label: "Location", property: "location", type: "text" },
 ];
 
 export const EditProfile = () => {
-    const [user, setUser] = useState<User>();
+    const [user, setUser] = useState<Partial<User>>();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -48,22 +56,71 @@ export const EditProfile = () => {
         loadProfile();
     }, [navigate]);
 
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+
+        setUser((user) => ({
+            ...user,
+            [name]: value,
+        }));
+    };
+
+    const callEditProfile = async (
+        event: React.SyntheticEvent<HTMLFormElement>,
+    ) => {
+        event.preventDefault();
+
+        if (!user) {
+            console.error("Error with this profile");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+
+            await api.put(
+                "/users/me",
+                {
+                    email: user.email,
+                    dob: user.dob,
+                    bio: user.bio,
+                    research_field: user.research_field,
+                    location: user.location,
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                },
+            );
+
+            navigate("/profile");
+        } catch (error) {
+            handleError(error as AxiosError, navigate);
+        }
+    };
+
     return (
         <div className={styles.container}>
-            <div className={styles.fieldContainer}>
-                {fields.map(({ label, property, type, disabled }) => (
-                    <div className={styles.field}>
-                        <Label>{label}</Label>
-                        <Input
-                            name={property}
-                            className={styles.property}
-                            type={type}
-                            disabled={disabled}
-                            value={user?.[property]}
-                        />
-                    </div>
-                ))}
-            </div>
+            <Form onSubmit={callEditProfile}>
+                <div className={styles.fieldContainer}>
+                    {fields.map(
+                        ({ label, property, type, disabled, required }) => (
+                            <div className={styles.field}>
+                                <Label>{label}</Label>
+                                <Input
+                                    name={property}
+                                    className={styles.property}
+                                    type={type}
+                                    disabled={disabled}
+                                    onChange={handleChange}
+                                    value={user?.[property]}
+                                    required={required}
+                                />
+                            </div>
+                        ),
+                    )}
+                </div>
+                <Button htmlType="submit">Save</Button>
+            </Form>
         </div>
     );
 };

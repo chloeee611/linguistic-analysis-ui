@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { api, handleError } from "@/api/api";
 import { useNavigate } from "react-router";
+import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
+import { NavLink } from "@/components/nav-link";
+import { Button } from "@/components/button";
 import { Label } from "@/components/label";
 import { User } from "@/model/user.types";
-import { api, handleError } from "@/api/api";
-import { AxiosError } from "axios";
 
 import styles from "./view-profile.module.scss";
 
@@ -19,7 +21,7 @@ const fields: Field[] = [
     { label: "Email", property: "email" },
     { label: "Date of birth", property: "dob" },
     { label: "Bio", property: "bio" },
-    { label: "Research Field", property: "researchField" },
+    { label: "Research Field", property: "research_field" },
     { label: "Location", property: "location" },
 ];
 
@@ -47,6 +49,9 @@ export const ViewProfile = () => {
 
     return (
         <div className={styles.container}>
+            <Button>
+                <NavLink to="/profile/edit">Edit</NavLink>
+            </Button>
             <div className={styles.fieldContainer}>
                 {fields.map(({ label, property }) => (
                     <div className={styles.field}>

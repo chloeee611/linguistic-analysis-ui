@@ -6,7 +6,7 @@ export type User = {
     password: string;
     dob: string;
     bio: string;
-    researchField: string;
+    research_field: string;
     location: string;
 };
 
