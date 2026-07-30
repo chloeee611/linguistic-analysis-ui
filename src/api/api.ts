@@ -1,5 +1,20 @@
 import axios, { AxiosError } from "axios";
 
+export type PaginationLinks = {
+    first: string;
+    self: string;
+    prev?: string;
+    next?: string;
+    last: string;
+};
+
+export type PaginationMeta = {
+    page: number;
+    size: number;
+    lastPage: number;
+    total: number;
+};
+
 export const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     headers: {

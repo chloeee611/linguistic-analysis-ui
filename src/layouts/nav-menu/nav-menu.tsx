@@ -33,9 +33,19 @@ const items: MenuItem[] = [
         label: <NavLink to="/transcripts">Transcripts</NavLink>,
     },
     {
-        key: "/profile",
+        key: "profile-group",
         icon: <UserOutlined />,
-        label: <NavLink to="/profile">Profile</NavLink>,
+        label: "Profile",
+        children: [
+            {
+                key: "/profile",
+                label: <NavLink to="/profile">View</NavLink>,
+            },
+            {
+                key: "/profile/edit",
+                label: <NavLink to="/profile/edit">Edit</NavLink>,
+            },
+        ],
     },
     {
         key: "/logout",
