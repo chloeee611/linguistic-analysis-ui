@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Transcript, TranscriptContent } from "@/model/transcript.types";
 import { Pagination } from "@/components/pagination";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Heading } from "@/components/heading";
-import { api } from "@/api/api";
+import { api, handleError } from "@/api/api";
+import { AxiosError } from "axios";
 
 export const TranscriptDetails = () => {
     const { transcriptId } = useParams();
@@ -11,6 +12,8 @@ export const TranscriptDetails = () => {
     const [transcript, setTranscript] = useState<Transcript>();
     const [transcriptContent, setTranscriptContent] =
         useState<TranscriptContent>();
+
+    const navigate = useNavigate();
 
     const getTranscript = useCallback(async () => {
         try {
@@ -23,10 +26,9 @@ export const TranscriptDetails = () => {
             );
             setTranscript(data);
         } catch (error) {
-            console.error("Failed to request transcript", error);
-            throw error;
+            handleError(error as AxiosError, navigate);
         }
-    }, [transcriptId]);
+    }, [transcriptId, navigate]);
 
     const getTranscriptContent = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
@@ -40,11 +42,10 @@ export const TranscriptDetails = () => {
                 );
                 setTranscriptContent(data);
             } catch (error) {
-                console.error("Failed to request transcript", error);
-                throw error;
+                handleError(error as AxiosError, navigate);
             }
         },
-        [transcriptId],
+        [transcriptId, navigate],
     );
 
     useEffect(() => {
@@ -81,7 +82,9 @@ export const TranscriptDetails = () => {
             {transcriptContent && (
                 <div>
                     {transcriptContent.content.map((line, i) => (
-                        <p key={i}>{line}</p>
+                        <p key={i}>
+                            {line.speaker}: {line.utterance}
+                        </p>
                     ))}
                     <Pagination
                         current={transcriptContent.meta.page}

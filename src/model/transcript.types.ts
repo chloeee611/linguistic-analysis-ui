@@ -27,7 +27,13 @@ export type TranscriptSpeaker = {
 };
 
 export type TranscriptContent = {
-    content: string[];
+    content: TranscriptContentUtterance[];
     links: PaginationLinks;
     meta: PaginationMeta;
+};
+
+export type TranscriptContentUtterance = {
+    utterance?: string;
+    speaker?: string;
+    [key: string]: string | undefined;
 };
