@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useState, type SubmitEvent } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Transcript } from "@/model/transcript.types";
 import { Paragraph } from "@/components/paragraph";
 import { useParams } from "react-router";
 import { Heading } from "@/components/heading";
 import { Project } from "@/model/project.types";
-import { Button } from "@/components/button";
-import { Form } from "@/components/form";
 import { api } from "@/api/api";
 
 export const ProjectDetails = () => {
@@ -52,27 +50,6 @@ export const ProjectDetails = () => {
         loadProject();
     }, [getProject, getTranscript]);
 
-    const callUploadTranscript = async (event: SubmitEvent) => {
-        event.preventDefault(); // Stop page from refreshing
-
-        if (!projectId) {
-            console.error("Error with project ID");
-            return;
-        }
-
-        const formData = new FormData(event.target);
-        formData.append("projectId", projectId);
-
-        const token = localStorage.getItem("token");
-        const { data } = await api.post("/transcripts", formData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "content-type": "multipart/form-data",
-            },
-        });
-        return data;
-    };
-
     return (
         <div>
             <Heading>Project {projectId} Details</Heading>
@@ -82,13 +59,6 @@ export const ProjectDetails = () => {
             {transcripts.map((transcript) => (
                 <div key={transcript.id}>{transcript.file_url}</div>
             ))}
-
-            <Form onSubmit={callUploadTranscript}>
-                <input name="uploaded_file" type="file" />
-                <Button htmlType="submit" type="primary">
-                    Upload Transcript
-                </Button>
-            </Form>
         </div>
     );
 };

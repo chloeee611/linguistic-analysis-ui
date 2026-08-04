@@ -81,7 +81,7 @@ export const TranscriptDetails = () => {
             )}
             {transcriptContent && (
                 <div>
-                    {transcriptContent.content.map((line, i) => (
+                    {transcriptContent.content?.map((line, i) => (
                         <p key={i}>
                             {line.speaker}: {line.utterance}
                         </p>

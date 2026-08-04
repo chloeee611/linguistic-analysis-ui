@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
+import { api, handleError } from "@/api/api";
 import { useNavigate } from "react-router";
 import { Transcript } from "@/model/transcript.types";
+import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { NavLink } from "@/components/nav-link";
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { api, handleError } from "@/api/api";
 
 import styles from "./transcripts.module.scss";
-import { AxiosError } from "axios";
 
 export const Transcripts = () => {
     const [transcripts, setTranscripts] = useState<Transcript[]>([]);
@@ -17,7 +17,7 @@ export const Transcripts = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const loadProject = async () => {
+        const loadTranscripts = async () => {
             const token = localStorage.getItem("token");
 
             try {
@@ -31,7 +31,7 @@ export const Transcripts = () => {
             }
         };
 
-        loadProject();
+        loadTranscripts();
     }, [navigate]);
 
     return (

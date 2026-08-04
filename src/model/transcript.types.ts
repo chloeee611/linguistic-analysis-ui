@@ -1,8 +1,8 @@
 import { PaginationLinks, PaginationMeta } from "@/api/api";
 
 export type Transcript = {
-    id: number;
-    project_id: number;
+    id: string;
+    project_id: string;
     title: string;
     file_url: string;
     metadata: Record<string, unknown>;

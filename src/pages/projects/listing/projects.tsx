@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
+import { api, handleError } from "@/api/api";
 import { useNavigate } from "react-router";
+import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { Project } from "@/model/project.types";
+import { NavLink } from "@/components/nav-link";
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { api, handleError } from "@/api/api";
 
 import styles from "./projects.module.scss";
-import { NavLink } from "@/components/nav-link";
-import { AxiosError } from "axios";
 
 export const Projects = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -71,7 +71,6 @@ export const Projects = () => {
                     <Card
                         key={id}
                         title={title}
-                        className={styles.projectCard}
                         onClick={() => navigate(`/projects/${id}`)}
                     >
                         <Paragraph>{description}</Paragraph>

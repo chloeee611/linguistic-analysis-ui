@@ -3,6 +3,7 @@ import { Count, Dashboard, Projects, ProjectDetails } from "./pages";
 import { CreateEditProject } from "./pages/projects/create-edit/create-edit-project";
 import { TranscriptDetails } from "./pages/transcripts/details/transcript-details";
 import { UploadTranscripts } from "./pages/transcripts/uploads/transcript-upload";
+import { LinkTranscript } from "./pages/projects/transcripts/link/link-transcript";
 import { Route, Routes } from "react-router";
 import { EditProfile } from "./pages/profile/edit-profile/edit-profile";
 import { Transcripts } from "./pages/transcripts/listing/transcripts";
@@ -49,6 +50,10 @@ function Router() {
                 <Route
                     path="projects/:projectId"
                     element={<ProjectDetails />}
+                />
+                <Route
+                    path="projects/:projectId/transcripts/link"
+                    element={<LinkTranscript />}
                 />
 
                 <Route path="transcripts" element={<Transcripts />} />
