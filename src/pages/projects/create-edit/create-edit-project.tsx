@@ -14,6 +14,8 @@ export const CreateEditProject = () => {
 
     const callCreateProject = async (event: SubmitEvent) => {
         try {
+            event.preventDefault();
+
             const token = localStorage.getItem("token");
             const formObject = parseFormData<Project>(event);
             const { data, status } = await api.post("/projects", formObject, {
@@ -22,7 +24,7 @@ export const CreateEditProject = () => {
 
             if (status === 201) {
                 console.log("Project created successfully");
-                await navigate(`/projects/${data.id}`);
+                navigate(`/projects/${data.id}`);
             }
 
             // TODO: return newly created project id, then navigate to new project page

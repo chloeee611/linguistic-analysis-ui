@@ -1,11 +1,13 @@
-import { type SubmitEvent } from "react";
 import { useNavigate, useParams } from "react-router";
+import { SubmitEvent } from "react";
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/button";
 import { Form } from "@/components/form";
 import { api } from "@/api/api";
 
-export const UploadProjectTranscript = () => {
+import styles from "./upload-transcript.module.scss";
+
+export const UploadTranscript = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
 
@@ -20,7 +22,7 @@ export const UploadProjectTranscript = () => {
         const formData = new FormData(event.target);
 
         const token = localStorage.getItem("token");
-        const { status } = await api.post("/transcripts", formData, {
+        const { status } = await api.post(`/projects/${projectId}/transcripts`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "content-type": "multipart/form-data",
@@ -33,7 +35,7 @@ export const UploadProjectTranscript = () => {
     };
 
     return (
-        <div>
+        <div className={styles.container}>
             <Heading>Upload Project Transcript</Heading>
 
             <Form onSubmit={callUploadTranscript}>

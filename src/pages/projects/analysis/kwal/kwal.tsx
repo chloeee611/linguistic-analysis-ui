@@ -21,9 +21,7 @@ export const Kwal = () => {
     // Need input for searching utterance
     // Need a way of selecting transcripts - move the transcripts listing into a separate component so that we can re-use it in this page to select transcript
 
-    const [transcripts, setTranscripts] = useState<
-        Record<string, SelectableTranscript>
-    >({});
+    const [transcripts, setTranscripts] = useState<Record<string, SelectableTranscript>>({});
 
     const { projectId } = useParams();
     const navigate = useNavigate();
@@ -33,12 +31,9 @@ export const Kwal = () => {
             const token = localStorage.getItem("token");
 
             try {
-                const { data } = await api.get<Transcript[]>(
-                    `/transcripts/projects/${projectId}`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    },
-                );
+                const { data } = await api.get<Transcript[]>(`/projects/${projectId}/transcripts`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
                 const transcriptLookup = Object.fromEntries(
                     data.map((transcript) => [
@@ -96,18 +91,16 @@ export const Kwal = () => {
             <Input name="search_utterance" />
             <input name="project_id" value={projectId} hidden />
             <div className={styles.listingGrid}>
-                {Object.values(transcripts).map(
-                    ({ id, title, file_url, selected }) => (
-                        <Card
-                            key={id}
-                            title={title}
-                            disabled={selected}
-                            onClick={() => onCardClick(id)}
-                        >
-                            <Paragraph>{file_url}</Paragraph>
-                        </Card>
-                    ),
-                )}
+                {Object.values(transcripts).map(({ id, title, file_url, selected }) => (
+                    <Card
+                        key={id}
+                        title={title}
+                        disabled={selected}
+                        onClick={() => onCardClick(id)}
+                    >
+                        <Paragraph>{file_url}</Paragraph>
+                    </Card>
+                ))}
             </div>
             <Button htmlType="submit">Run Analysis</Button>
         </Form>

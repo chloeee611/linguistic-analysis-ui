@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { Transcript, TranscriptContent } from "@/model/transcript.types";
-import { Pagination } from "@/components/pagination";
 import { useNavigate, useParams } from "react-router";
-import { Heading } from "@/components/heading";
 import { api, handleError } from "@/api/api";
+import { Pagination } from "@/components/pagination";
 import { AxiosError } from "axios";
+import { Heading } from "@/components/heading";
 
 export const TranscriptDetails = () => {
-    const { transcriptId } = useParams();
+    const { projectId, transcriptId } = useParams();
 
     const [transcript, setTranscript] = useState<Transcript>();
-    const [transcriptContent, setTranscriptContent] =
-        useState<TranscriptContent>();
+    const [transcriptContent, setTranscriptContent] = useState<TranscriptContent>();
 
     const navigate = useNavigate();
 
@@ -19,7 +18,7 @@ export const TranscriptDetails = () => {
         try {
             const token = localStorage.getItem("token");
             const { data } = await api.get<Transcript>(
-                `/transcripts/${transcriptId}`,
+                `/projects/${projectId}/transcripts/${transcriptId}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 },
@@ -28,24 +27,30 @@ export const TranscriptDetails = () => {
         } catch (error) {
             handleError(error as AxiosError, navigate);
         }
-    }, [transcriptId, navigate]);
+    }, [projectId, transcriptId, navigate]);
 
     const getTranscriptContent = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
             try {
                 const token = localStorage.getItem("token");
+
                 const { data } = await api.get<TranscriptContent>(
-                    `/transcripts/${transcriptId}/content?page=${page}&pageSize=${pageSize}`,
+                    `/projects/${projectId}/transcripts/${transcriptId}/content`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
+                        params: {
+                            page,
+                            pageSize,
+                        },
                     },
                 );
+
                 setTranscriptContent(data);
             } catch (error) {
                 handleError(error as AxiosError, navigate);
             }
         },
-        [transcriptId, navigate],
+        [projectId, transcriptId, navigate],
     );
 
     useEffect(() => {
@@ -68,14 +73,12 @@ export const TranscriptDetails = () => {
             {transcript?.metadata && (
                 <table>
                     <tbody>
-                        {Object.entries(transcript.metadata).map(
-                            ([key, value]) => (
-                                <tr key={key}>
-                                    <td>{key}</td>
-                                    <td>{JSON.stringify(value)}</td>
-                                </tr>
-                            ),
-                        )}
+                        {Object.entries(transcript.metadata).map(([key, value]) => (
+                            <tr key={key}>
+                                <td>{key}</td>
+                                <td>{JSON.stringify(value)}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             )}
