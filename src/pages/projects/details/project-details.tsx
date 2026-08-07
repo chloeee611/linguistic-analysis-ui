@@ -6,6 +6,11 @@ import { Heading } from "@/components/heading";
 import { Project } from "@/model/project.types";
 import { api } from "@/api/api";
 
+import styles from "./project-details.module.scss";
+import { Card } from "@/components/card";
+import { Button } from "@/components/button";
+import { NavLink } from "@/components/nav-link";
+
 export const ProjectDetails = () => {
     const { projectId } = useParams();
 
@@ -26,7 +31,7 @@ export const ProjectDetails = () => {
             console.log("projectId:", projectId);
             const token = localStorage.getItem("token");
             const { data } = await api.get<Transcript[]>(
-                `/transcripts/project/${projectId}`,
+                `/transcripts/projects/${projectId}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 },
@@ -52,13 +57,22 @@ export const ProjectDetails = () => {
 
     return (
         <div>
-            <Heading>Project {projectId} Details</Heading>
-            <Paragraph>{project?.title}</Paragraph>
-            <Paragraph>{project?.description}</Paragraph>
+            <div className={styles.header}>
+                <Heading>Project {projectId} Details</Heading>
+                <Button>
+                    <NavLink to={`/projects/${projectId}/transcripts/upload`}>
+                        Upload
+                    </NavLink>
+                </Button>
+            </div>
             <Heading>Transcripts</Heading>
-            {transcripts.map((transcript) => (
-                <div key={transcript.id}>{transcript.file_url}</div>
-            ))}
+            <div className={styles.listingGrid}>
+                {transcripts.map(({ id, title, file_url }) => (
+                    <Card key={id} title={title}>
+                        <Paragraph>{file_url}</Paragraph>
+                    </Card>
+                ))}
+            </div>
         </div>
     );
 };

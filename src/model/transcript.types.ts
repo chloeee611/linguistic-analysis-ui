@@ -8,6 +8,10 @@ export type Transcript = {
     metadata: Record<string, unknown>;
 };
 
+export type SelectableTranscript = Transcript & {
+    selected: boolean;
+};
+
 export type TranscriptMetadata = {
     id: Record<string, TranscriptSpeaker>;
     date: string;

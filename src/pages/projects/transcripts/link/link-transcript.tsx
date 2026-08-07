@@ -1,7 +1,7 @@
+import { SelectableTranscript, Transcript } from "@/model/transcript.types";
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { api, handleError } from "@/api/api";
-import { Transcript } from "@/model/transcript.types";
 import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { Heading } from "@/components/heading";
@@ -13,7 +13,7 @@ import styles from "./link-transcript.module.scss";
 
 export const LinkTranscript = () => {
     const [transcripts, setTranscripts] = useState<
-        Record<string, Transcript & { selected: boolean }>
+        Record<string, SelectableTranscript>
     >({});
     const [existingTranscripts, setExistingTranscripts] = useState<
         Transcript[]
