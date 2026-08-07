@@ -50,7 +50,10 @@ const items: MenuItem[] = [
     {
         key: "/logout",
         icon: <LogoutOutlined />,
-        label: <NavLink to="/logout">Logout</NavLink>,
+        label: <NavLink to="/login">Logout</NavLink>,
+        onClick: () => {
+            localStorage.removeItem("token");
+        },
     },
 ];
 
