@@ -1,0 +1,41 @@
+:root {
+    --bg-color-primary: #fff;
+    --bg-color-secondary: #f1f1f1;
+    --bg-color-tertiary: #e9e9e9;
+
+    --accent-primary: #5fbd92;
+    --accent-secondary: #227d53;
+    --accent-tertiary: #12452d;
+    --accent-light: #6d8b74;
+
+    --text-primary: #000;
+    --text-secondary: #767676;
+    --text-tertiary: #9aa29a;
+
+    --border-radius: 15px;
+
+    --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+    --heading: system-ui, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, Consolas, monospace;
+
+    font: 18px/145% var(--sans);
+    letter-spacing: 0.18px;
+    color-scheme: light dark;
+    color: black;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+}
+
+p {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}

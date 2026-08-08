@@ -87,7 +87,7 @@ export const UploadTranscript = () => {
 
     return (
         <div className={styles.container}>
-            <Heading>Upload Project Transcript</Heading>
+            <Heading level={1}>Upload Project Transcript</Heading>
 
             <Form onSubmit={callUploadTranscript}>
                 <input name="uploaded_file" type="file" multiple />

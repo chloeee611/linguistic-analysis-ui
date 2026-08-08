@@ -53,12 +53,12 @@ export const Transcripts = () => {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <Heading>Project {projectId} Details</Heading>
+                <Heading level={1}>Project {projectId} Details</Heading>
                 <Button>
                     <NavLink to={`/projects/${projectId}/transcripts/upload`}>Upload</NavLink>
                 </Button>
             </div>
-            <Heading>Transcripts</Heading>
+            <Heading level={2}>Transcripts</Heading>
             <div className={styles.listingGrid}>
                 {transcripts.map(({ id, title, file_url }) => (
                     <Card key={id} title={title}>

@@ -8,11 +8,10 @@ import {
 } from "@ant-design/icons";
 import { Outlet, useLocation } from "react-router";
 import { Menu, MenuProps } from "antd";
-import { useState } from "react";
 import { NavLink } from "@/components/nav-link";
 
 import styles from "./nav-menu.module.scss";
-import clsx from "clsx";
+import { useState } from "react";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -58,44 +57,47 @@ const items: MenuItem[] = [
 ];
 
 export const NavMenu = () => {
-    const [collapsed] = useState(false);
     const location = useLocation();
 
-    // const toggleDrawer = () => {
-    //     if (collapsed) {
-    //         setCollapsed(false);
-    //     } else {
-    //         setCollapsed(true);
-    //     }
-    // };
+    const [current, setCurrent] = useState("mail");
+
+    const onClick: MenuProps["onClick"] = (e) => {
+        console.log("click ", e);
+        setCurrent(e.key);
+    };
 
     return (
-        <div
-            className={clsx(styles.pageContainer, {
-                [styles.pageContainerCollapsed]: collapsed,
-            })}
-        >
+        <div className={styles.pageContainer}>
             {/* <Button type="primary" onClick={toggleDrawer}>
                 Open
             </Button> */}
             <div className={styles.navMenuContainer}>
                 <NavLink className={styles.logo} to="/">
                     <CommentOutlined />
-                    {!collapsed && "ling.ui.ni"}
+                    ling.ui.ni
                 </NavLink>
 
                 <Menu
                     defaultSelectedKeys={[location.pathname]}
                     defaultOpenKeys={["sub1"]}
                     mode="inline"
-                    theme="dark"
-                    inlineCollapsed={collapsed}
+                    theme="light"
                     items={items}
                     className={styles.navMenu}
                 />
             </div>
 
-            <div className={styles.contentPadding}>
+            <div className={styles.main}>
+                <div className={styles.header}>
+                    <Menu
+                        className={styles.projectMenu}
+                        onClick={onClick}
+                        selectedKeys={[current]}
+                        mode="horizontal"
+                        items={items}
+                    />
+                </div>
+
                 <div className={styles.content}>
                     <Outlet />
                 </div>

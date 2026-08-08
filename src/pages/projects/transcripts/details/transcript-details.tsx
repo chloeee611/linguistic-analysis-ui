@@ -17,12 +17,9 @@ export const TranscriptDetails = () => {
     const getTranscript = useCallback(async () => {
         try {
             const token = localStorage.getItem("token");
-            const { data } = await api.get<Transcript>(
-                `/projects/${projectId}/transcripts/${transcriptId}`,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                },
-            );
+            const { data } = await api.get<Transcript>(`/projects/${projectId}/transcripts/${transcriptId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             setTranscript(data);
         } catch (error) {
             handleError(error as AxiosError, navigate);
@@ -68,7 +65,7 @@ export const TranscriptDetails = () => {
 
     return (
         <div>
-            <Heading>Transcript</Heading>
+            <Heading level={1}>Transcript</Heading>
             {transcript && <div key={transcript.id}>{transcript.file_url}</div>}
             {transcript?.metadata && (
                 <table>

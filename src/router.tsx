@@ -34,10 +34,7 @@ function Router() {
                     <Route path=":projectId/kwal" element={<Kwal />} />
                     <Route path=":projectId/transcripts/upload" element={<UploadTranscript />} />
                     <Route path=":projectId/transcripts" element={<Transcripts />} />
-                    <Route
-                        path=":projectId/transcripts/:transcriptId"
-                        element={<TranscriptDetails />}
-                    />
+                    <Route path=":projectId/transcripts/:transcriptId" element={<TranscriptDetails />} />
                 </Route>
 
                 <Route path="profile" element={<ViewProfile />} />

@@ -59,7 +59,7 @@ export const Projects = () => {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <Heading>Projects</Heading>
+                <Heading level={1}>Projects</Heading>
                 <Button>
                     <NavLink to="/projects/create">Create Project</NavLink>
                 </Button>
@@ -68,11 +68,7 @@ export const Projects = () => {
             {/* TODO: create separate component for this */}
             <div className={styles.listingGrid}>
                 {projects.map(({ id, title, description }) => (
-                    <Card
-                        key={id}
-                        title={title}
-                        onClick={() => navigate(`/projects/${id}`)}
-                    >
+                    <Card key={id} title={title} onClick={() => navigate(`/projects/${id}`)}>
                         <Paragraph>{description}</Paragraph>
                     </Card>
                 ))}
