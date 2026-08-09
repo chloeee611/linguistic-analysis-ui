@@ -1,19 +1,27 @@
 import { FileTextOutlined, PieChartOutlined, SearchOutlined, SettingOutlined } from "@ant-design/icons";
 import { Menu, MenuProps } from "antd";
+import { useLocation } from "react-router";
 import { useProject } from "@/hooks/projects.hooks";
-import { useMemo, useState } from "react";
 import { NavLink } from "@/components/nav-link";
+import { useMemo } from "react";
 
 import styles from "./project-menu.module.scss";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
+const regex = /^\/projects\/\d+(?<route>\/(.*?))(?:\/(.*?))?$/i;
+
 export const ProjectMenu = () => {
-    const [current, setCurrent] = useState("/dashboard");
+    const { pathname } = useLocation();
+
+    const current = useMemo(() => {
+        const regexMatch = pathname.match(regex);
+        return regexMatch?.groups?.["route"] ?? "/";
+    }, [pathname]);
 
     const { project } = useProject();
 
-    const projectItems: MenuItem[] = useMemo(() => {
+    const projectItems = useMemo<MenuItem[]>(() => {
         if (project === undefined) {
             return [];
         }
@@ -34,7 +42,25 @@ export const ProjectMenu = () => {
             {
                 key: "/analysis",
                 icon: <SearchOutlined />,
-                label: <NavLink to={`${projectUrlString}/analysis`}>Analysis</NavLink>,
+                label: "Analysis",
+                children: [
+                    {
+                        key: "/analysis/kwal",
+                        label: <NavLink to={`${projectUrlString}/analysis/kwal`}>Search</NavLink>,
+                    },
+                    {
+                        key: "/analysis/mlu",
+                        label: <NavLink to={`${projectUrlString}/analysis/mlu`}>Mean Length of Utterance</NavLink>,
+                    },
+                    {
+                        key: "/analysis/freq",
+                        label: <NavLink to={`${projectUrlString}/analysis/freq`}>Frequency</NavLink>,
+                    },
+                    {
+                        key: "/analysis/lexrare",
+                        label: <NavLink to={`${projectUrlString}/analysis/lexrare`}>Word Rarity</NavLink>,
+                    },
+                ],
             },
             {
                 key: "/settings",
@@ -44,18 +70,8 @@ export const ProjectMenu = () => {
         ];
     }, [project]);
 
-    const onClick: MenuProps["onClick"] = (e) => {
-        setCurrent(e.key);
-    };
-
     return project ? (
-        <Menu
-            className={styles.projectMenu}
-            onClick={onClick}
-            selectedKeys={[current]}
-            mode="horizontal"
-            items={projectItems}
-        />
+        <Menu className={styles.projectMenu} selectedKeys={[current]} mode="horizontal" items={projectItems} />
     ) : (
         <div></div>
     );

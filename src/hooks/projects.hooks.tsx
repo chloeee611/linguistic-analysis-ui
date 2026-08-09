@@ -21,6 +21,10 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
 
     const getProject = useCallback(async () => {
+        if (projectId === undefined) {
+            return;
+        }
+
         try {
             const { data, status } = await api.get<Project>(`/projects/${projectId}`, {
                 headers: { Authorization: `Bearer ${token}` },

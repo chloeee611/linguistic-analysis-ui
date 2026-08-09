@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { Transcript } from "@/model/transcript.types";
 import { useProject } from "@/hooks/projects.hooks";
 import { Paragraph } from "@/components/paragraph";
@@ -15,6 +16,7 @@ import styles from "./transcripts.module.scss";
 export const Transcripts = () => {
     const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
+    const navigate = useNavigate();
     const { token } = useUser();
     const { project } = useProject();
 
@@ -58,7 +60,7 @@ export const Transcripts = () => {
             <Heading level={2}>Transcripts</Heading>
             <div className={styles.listingGrid}>
                 {transcripts.map(({ id, title, file_url }) => (
-                    <Card key={id} title={title}>
+                    <Card key={id} title={title} onClick={() => navigate(`/projects/${project.id}/transcripts/${id}`)}>
                         <Paragraph>{file_url}</Paragraph>
                     </Card>
                 ))}

@@ -1,4 +1,52 @@
 .projectMenu {
     background-color: var(--bg-color-secondary);
     flex-grow: 1;
+    flex-shrink: 1;
+    width: 100%;
+    border: none !important;
+    height: fit-content;
+
+    :global li {
+        margin: 0 !important;
+        font-size: 1.2em;
+        background-color: transparent !important;
+
+        &.ant-menu-item {
+            color: var(--text-secondary) !important;
+        }
+
+        &.ant-menu-submenu {
+            &.ant-menu-submenu-active,
+            &.ant-menu-submenu-selected {
+                > .ant-menu-submenu-title {
+                    color: var(--text-primary) !important;
+                }
+
+                &::after {
+                    border-bottom: 2px solid var(--accent-secondary) !important;
+                }
+            }
+
+            > .ant-menu-submenu-title {
+                color: var(--text-secondary) !important;
+            }
+        }
+
+        &.ant-menu-item-active::after {
+            border-bottom: 2px solid var(--accent-secondary) !important;
+        }
+
+        &.ant-menu-item-selected {
+            color: var(--text-primary) !important;
+            font-weight: 500;
+
+            &::after {
+                border-bottom: 2px solid var(--accent-secondary) !important;
+            }
+
+            > span.ant-menu-item-icon {
+                color: var(--accent-secondary) !important;
+            }
+        }
+    }
 }

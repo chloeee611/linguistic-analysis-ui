@@ -5,9 +5,10 @@ import { ProjectMenu } from "@/components/project-menu";
 import { Paragraph } from "@/components/paragraph";
 import { NavLink } from "@/components/nav-link";
 import { useUser } from "@/hooks/user.hooks";
+import { useMemo } from "react";
 import { Button } from "@/components/button";
 
-import styles from "./nav-menu.module.scss";
+import styles from "./global-layout.module.scss";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -38,8 +39,10 @@ const items: MenuItem[] = [
 ];
 
 export const NavMenu = () => {
-    const location = useLocation();
+    const { pathname } = useLocation();
     const { user } = useUser();
+
+    const current = useMemo(() => `/${pathname.split("/")[1]}`, [pathname]);
 
     return (
         <div className={styles.pageContainer}>
@@ -50,12 +53,12 @@ export const NavMenu = () => {
                 </NavLink>
 
                 <Menu
-                    defaultSelectedKeys={[location.pathname]}
                     defaultOpenKeys={["sub1"]}
                     mode="inline"
                     theme="light"
                     items={items}
                     className={styles.navMenu}
+                    selectedKeys={[current]}
                 />
             </div>
 
