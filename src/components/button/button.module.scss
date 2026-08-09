@@ -1,5 +1,72 @@
-.navLink {
-    font-size: 24px;
+// Properties allow the transition of background gradients
+@property --top-color {
+    syntax: "<color>";
+    initial-value: white;
+    inherits: false;
 }
 
-/* Bring in SCSS */
+@property --bottom-color {
+    syntax: "<color>";
+    initial-value: white;
+    inherits: false;
+}
+
+@property --text-color {
+    syntax: "<color>";
+    initial-value: white;
+    inherits: false;
+}
+
+.button {
+    border-radius: 20px;
+    transition-property: --top-color, --bottom-color, scale, background-color;
+    transition-duration: 0.3s;
+    background-color: var(--top-color) !important;
+    color: var(--text-color) !important;
+    border: none !important;
+
+    &.gradient {
+        background: linear-gradient(178deg, var(--top-color) 0%, var(--bottom-color) 88%) !important;
+    }
+
+    &:hover {
+        scale: 1.03;
+    }
+
+    &.primary {
+        --text-color: var(--text-light-primary);
+        --top-color: var(--accent-primary);
+        --bottom-color: var(--accent-secondary);
+
+        &:hover {
+            --text-color: var(--text-light-secondary);
+            --top-color: var(--accent-secondary);
+            --bottom-color: var(--accent-tertiary);
+        }
+    }
+
+    &.secondary {
+        --text-color: var(--text-light-primary);
+        --top-color: var(--accent-secondary);
+        --bottom-color: var(--accent-tertiary);
+
+        &:hover {
+            --text-color: var(--text-light-secondary);
+            --top-color: var(--accent-tertiary);
+            --bottom-color: var(--accent-light);
+        }
+    }
+
+    & &.small {
+    }
+
+    &.medium {
+        padding: 20px 30px;
+    }
+
+    &.middle {
+    }
+
+    &.large {
+    }
+}

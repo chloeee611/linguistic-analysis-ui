@@ -1,15 +1,8 @@
-import {
-    CommentOutlined,
-    FileTextOutlined,
-    FolderOpenOutlined,
-    LogoutOutlined,
-    PieChartOutlined,
-    UserOutlined,
-} from "@ant-design/icons";
+import { CommentOutlined, FolderOpenOutlined, HomeOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { Outlet, useLocation } from "react-router";
 import { Menu, MenuProps } from "antd";
+import { ProjectMenu } from "@/components/project-menu";
 import { Paragraph } from "@/components/paragraph";
-import { useState } from "react";
 import { NavLink } from "@/components/nav-link";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
@@ -21,8 +14,8 @@ type MenuItem = Required<MenuProps>["items"][number];
 const items: MenuItem[] = [
     {
         key: "/",
-        icon: <PieChartOutlined />,
-        label: <NavLink to="/">Dashboard</NavLink>,
+        icon: <HomeOutlined />,
+        label: <NavLink to="/">Home</NavLink>,
     },
     {
         key: "/projects",
@@ -30,24 +23,9 @@ const items: MenuItem[] = [
         label: <NavLink to="/projects">Projects</NavLink>,
     },
     {
-        key: "/transcripts",
-        icon: <FileTextOutlined />,
-        label: <NavLink to="/transcripts">Transcripts</NavLink>,
-    },
-    {
-        key: "profile-group",
+        key: "/profile",
         icon: <UserOutlined />,
-        label: "Profile",
-        children: [
-            {
-                key: "/profile",
-                label: <NavLink to="/profile">View</NavLink>,
-            },
-            {
-                key: "/profile/edit",
-                label: <NavLink to="/profile/edit">Edit</NavLink>,
-            },
-        ],
+        label: <NavLink to="/profile">Profile</NavLink>,
     },
     {
         key: "/logout",
@@ -60,21 +38,11 @@ const items: MenuItem[] = [
 ];
 
 export const NavMenu = () => {
-    const [current, setCurrent] = useState("mail");
-
     const location = useLocation();
     const { user } = useUser();
 
-    const onClick: MenuProps["onClick"] = (e) => {
-        console.log("click ", e);
-        setCurrent(e.key);
-    };
-
     return (
         <div className={styles.pageContainer}>
-            {/* <Button type="primary" onClick={toggleDrawer}>
-                Open
-            </Button> */}
             <div className={styles.navMenuContainer}>
                 <NavLink className={styles.logo} to="/">
                     <CommentOutlined />
@@ -93,22 +61,18 @@ export const NavMenu = () => {
 
             <div className={styles.main}>
                 <div className={styles.header}>
-                    <Menu
-                        className={styles.projectMenu}
-                        onClick={onClick}
-                        selectedKeys={[current]}
-                        mode="horizontal"
-                        items={items}
-                    />
+                    <ProjectMenu />
 
                     {user?.id ? (
-                        <div>
-                            <Paragraph>{user.name}</Paragraph>
-                            <Paragraph>{user.email}</Paragraph>
+                        <div className={styles.user}>
+                            <Paragraph className={styles.userName}>{user.name}</Paragraph>
+                            <Paragraph className={styles.userEmail}>{user.email}</Paragraph>
                         </div>
                     ) : (
                         <NavLink to="/login">
-                            <Button>Login</Button>
+                            <Button type="secondary" gradient>
+                                Login
+                            </Button>
                         </NavLink>
                     )}
                 </div>

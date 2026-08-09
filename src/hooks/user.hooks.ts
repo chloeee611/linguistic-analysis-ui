@@ -33,7 +33,5 @@ export const useUser = () => {
         }
     }, [token]);
 
-    console.log(`user.hooks.ts:22 || user:`, user);
-
     return { user, token, login, logout };
 };

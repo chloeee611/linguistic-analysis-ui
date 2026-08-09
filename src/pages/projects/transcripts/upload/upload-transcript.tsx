@@ -1,7 +1,8 @@
 import { SubmitEvent, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
 import { TranscriptUploadTask } from "@/model/task.types";
-import { Progress } from "antd";
+import { useNavigate } from "react-router";
+import { useProject } from "@/hooks/projects.hooks";
+import { Progress, Spin } from "antd";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
@@ -11,8 +12,6 @@ import { api } from "@/api/api";
 import styles from "./upload-transcript.module.scss";
 
 export const UploadTranscript = () => {
-    const { projectId } = useParams();
-
     const [progress, setProgress] = useState<number>();
     const [total, setTotal] = useState<number>();
     const [taskLocation, setTaskLocation] = useState<string>();
@@ -20,18 +19,19 @@ export const UploadTranscript = () => {
 
     const navigate = useNavigate();
     const { token } = useUser();
+    const { project } = useProject();
 
     const callUploadTranscript = async (event: SubmitEvent) => {
         event.preventDefault(); // Stop page from refreshing
 
-        if (!projectId) {
+        if (!project) {
             console.error("Error with project ID");
             return;
         }
 
         const formData = new FormData(event.target);
 
-        const { data, status } = await api.post(`/projects/${projectId}/transcripts`, formData, {
+        const { data, status } = await api.post(`/projects/${project.id}/transcripts`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "content-type": "multipart/form-data",
@@ -81,7 +81,11 @@ export const UploadTranscript = () => {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [taskLocation, total, navigate, projectId, uploadStatus, token]);
+    }, [taskLocation, total, navigate, project, uploadStatus, token]);
+
+    if (project === undefined) {
+        return <Spin />;
+    }
 
     return (
         <div className={styles.container}>
@@ -89,7 +93,7 @@ export const UploadTranscript = () => {
 
             <Form onSubmit={callUploadTranscript}>
                 <input name="uploaded_file" type="file" multiple />
-                <input name="project_id" value={projectId} hidden />
+                <input name="project_id" value={project.id} hidden />
                 <Button htmlType="submit" type="primary">
                     Upload Transcript
                 </Button>

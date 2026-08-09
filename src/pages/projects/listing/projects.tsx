@@ -14,7 +14,6 @@ import styles from "./projects.module.scss";
 
 export const Projects = () => {
     const [projects, setProjects] = useState<Project[]>([]);
-    // const [wordCount, setWordCount] = useState(null);
 
     const navigate = useNavigate();
     const { token } = useUser();
@@ -39,7 +38,7 @@ export const Projects = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <Heading level={1}>Projects</Heading>
-                <Button>
+                <Button type="primary" gradient>
                     <NavLink to="/projects/create">Create Project</NavLink>
                 </Button>
             </div>

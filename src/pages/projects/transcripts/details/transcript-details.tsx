@@ -3,35 +3,45 @@ import { Transcript, TranscriptContent } from "@/model/transcript.types";
 import { useNavigate, useParams } from "react-router";
 import { api, handleError } from "@/api/api";
 import { Pagination } from "@/components/pagination";
+import { useProject } from "@/hooks/projects.hooks";
 import { AxiosError } from "axios";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 
 export const TranscriptDetails = () => {
-    const { projectId, transcriptId } = useParams();
+    const { transcriptId } = useParams();
 
     const [transcript, setTranscript] = useState<Transcript>();
     const [transcriptContent, setTranscriptContent] = useState<TranscriptContent>();
 
     const navigate = useNavigate();
     const { token } = useUser();
+    const { project } = useProject();
 
     const getTranscript = useCallback(async () => {
+        if (!project) {
+            return;
+        }
+
         try {
-            const { data } = await api.get<Transcript>(`/projects/${projectId}/transcripts/${transcriptId}`, {
+            const { data } = await api.get<Transcript>(`/projects/${project.id}/transcripts/${transcriptId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setTranscript(data);
         } catch (error) {
             handleError(error as AxiosError, navigate);
         }
-    }, [projectId, transcriptId, navigate, token]);
+    }, [project, transcriptId, navigate, token]);
 
     const getTranscriptContent = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
+            if (!project) {
+                return;
+            }
+
             try {
                 const { data } = await api.get<TranscriptContent>(
-                    `/projects/${projectId}/transcripts/${transcriptId}/content`,
+                    `/projects/${project.id}/transcripts/${transcriptId}/content`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                         params: {
@@ -46,7 +56,7 @@ export const TranscriptDetails = () => {
                 handleError(error as AxiosError, navigate);
             }
         },
-        [projectId, transcriptId, navigate, token]
+        [project, transcriptId, navigate, token]
     );
 
     useEffect(() => {

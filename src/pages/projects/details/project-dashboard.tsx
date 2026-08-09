@@ -1,96 +1,64 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
 import { api, handleError } from "@/api/api";
-import { Transcript } from "@/model/transcript.types";
+import { useNavigate } from "react-router";
+import { useProject } from "@/hooks/projects.hooks";
 import { AxiosError } from "axios";
-import { Paragraph } from "@/components/paragraph";
 import { ChartData } from "recharts/types/state/chartDataSlice";
 import { Heading } from "@/components/heading";
-import { Project } from "@/model/project.types";
 import { NavLink } from "@/components/nav-link";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
-import { Card } from "@/components/card";
+import { Spin } from "antd";
 
-import styles from "./project-details.module.scss";
+import styles from "./project-dashboard.module.scss";
 
 type ProjectSummaryReturn = { data: ChartData };
 
-export const ProjectDetails = () => {
-    const { projectId } = useParams();
-
-    const [, setProject] = useState<Project>();
-    const [transcripts, setTranscripts] = useState<Transcript[]>();
+export const ProjectDashboard = () => {
     const [projectSummary, setProjectSummary] = useState<ProjectSummaryReturn>();
 
     const navigate = useNavigate();
     const { token } = useUser();
-
-    const getProject = useCallback(async () => {
-        try {
-            const { data } = await api.get<Project>(`/projects/${projectId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            return data;
-        } catch (error) {
-            handleError(error as AxiosError, navigate);
-        }
-    }, [projectId, navigate, token]);
-
-    const getTranscript = useCallback(async () => {
-        try {
-            const { data } = await api.get<Transcript[]>(`/projects/${projectId}/transcripts`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            return data;
-        } catch (error) {
-            handleError(error as AxiosError, navigate);
-        }
-    }, [projectId, navigate, token]);
+    const { project } = useProject();
 
     const getProjectSummary = useCallback(async () => {
+        if (!project) {
+            return;
+        }
+
         try {
-            const { data } = await api.get<ProjectSummaryReturn>(`/projects/${projectId}/dashboard`, {
+            const { data } = await api.get<ProjectSummaryReturn>(`/projects/${project.id}/dashboard`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             return data;
         } catch (error) {
             handleError(error as AxiosError, navigate);
         }
-    }, [projectId, navigate, token]);
+    }, [project, navigate, token]);
 
     useEffect(() => {
         const loadProject = async () => {
-            const projectData = await getProject();
-            setProject(projectData);
-
-            const transcriptData = await getTranscript();
-            setTranscripts(transcriptData);
-
             const projectSummary = await getProjectSummary();
             setProjectSummary(projectSummary);
         };
 
         loadProject();
-    }, [getProject, getTranscript, getProjectSummary]);
+    }, [project, getProjectSummary]);
+
+    if (!project) {
+        return <Spin />;
+    }
 
     return (
-        <div>
+        <div className={styles.container}>
             <div className={styles.header}>
-                <Heading level={1}>Project {projectId} Details</Heading>
+                <Heading level={1}>{project.title}</Heading>
                 <Button>
-                    <NavLink to={`/projects/${projectId}/transcripts/upload`}>Upload</NavLink>
+                    <NavLink to={`/projects/${project.id}/transcripts/upload`}>Upload</NavLink>
                 </Button>
             </div>
             <Heading level={2}>Transcripts</Heading>
-            <div className={styles.listingGrid}>
-                {transcripts?.map(({ id, title, file_url }) => (
-                    <Card key={id} title={title} onClick={() => navigate(`transcripts/${id}`)}>
-                        <Paragraph>{file_url}</Paragraph>
-                    </Card>
-                ))}
-            </div>
 
             {projectSummary && (
                 <LineChart

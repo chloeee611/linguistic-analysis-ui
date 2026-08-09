@@ -12,8 +12,8 @@
 .navMenuContainer {
     grid-column: 1;
     background-color: var(--bg-color-secondary);
-    padding: 20px;
     border-radius: var(--border-radius);
+    padding: 5px;
 }
 
 .logo {
@@ -27,6 +27,10 @@
     text-decoration: none;
     transition: opacity 0.2s;
 
+    svg {
+        color: var(--accent-secondary);
+    }
+
     &:hover {
         opacity: 0.8;
     }
@@ -34,6 +38,31 @@
 
 .navMenu {
     background-color: var(--bg-color-secondary);
+    width: 100%;
+    border: none !important;
+
+    :global li {
+        // padding-left: 0 !important;
+        // padding-right: 0;
+        padding: 0 20px !important;
+        margin: 0 !important;
+        font-size: 1.2em;
+        background-color: transparent !important;
+
+        &.ant-menu-item {
+            color: var(--text-secondary);
+        }
+
+        &.ant-menu-item-selected {
+            border-left: 2px solid var(--accent-secondary);
+            color: var(--text-primary);
+            font-weight: 500;
+
+            > span.ant-menu-item-icon {
+                color: var(--accent-secondary);
+            }
+        }
+    }
 }
 
 .main {
@@ -52,11 +81,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 5px 10px;
 }
 
-.projectMenu {
-    background-color: var(--bg-color-secondary);
-    flex-grow: 1;
+.user {
+    display: flex;
+    gap: 10px;
+
+    > .userName {
+        font-size: 1em;
+    }
+
+    > .userEmail {
+        font-size: 0.8em;
+    }
 }
 
 .content {
@@ -65,7 +103,7 @@
     display: flex;
     border-radius: var(--border-radius);
     overflow-y: auto;
-    padding: 20px 40px;
+    padding: 10px 20px;
 
     scrollbar-color: var(--accent-light) transparent;
     scrollbar-arrow-color: var(--bg-color-secondary);

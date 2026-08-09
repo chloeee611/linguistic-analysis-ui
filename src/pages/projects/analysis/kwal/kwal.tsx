@@ -1,8 +1,9 @@
 import { SelectableTranscript, Transcript } from "@/model/transcript.types";
 import { SubmitEvent, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
 import { api, handleError } from "@/api/api";
 import { parseFormData } from "@/helpers/form.helpers";
+import { useNavigate } from "react-router";
+import { useProject } from "@/hooks/projects.hooks";
 import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { useUser } from "@/hooks/user.hooks";
@@ -12,6 +13,7 @@ import { Form } from "@/components/form";
 import { Card } from "@/components/card";
 
 import styles from "./kwal.module.scss";
+import { Spin } from "antd";
 
 type KwalForm = {
     search_utterance: string;
@@ -24,14 +26,18 @@ export const Kwal = () => {
 
     const [transcripts, setTranscripts] = useState<Record<string, SelectableTranscript>>({});
 
-    const { projectId } = useParams();
     const navigate = useNavigate();
     const { token } = useUser();
+    const { project } = useProject();
 
     useEffect(() => {
         const loadTranscripts = async () => {
+            if (!project) {
+                return;
+            }
+
             try {
-                const { data } = await api.get<Transcript[]>(`/projects/${projectId}/transcripts`, {
+                const { data } = await api.get<Transcript[]>(`/projects/${project.id}/transcripts`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -52,7 +58,7 @@ export const Kwal = () => {
         };
 
         loadTranscripts();
-    }, [projectId, navigate, token]);
+    }, [project, navigate, token]);
 
     const onCardClick = (id: string) => {
         const currentTranscript = transcripts[id];
@@ -84,10 +90,14 @@ export const Kwal = () => {
         }
     };
 
+    if (!project) {
+        return <Spin />;
+    }
+
     return (
         <Form onSubmit={onSubmit}>
             <Input name="search_utterance" />
-            <input name="project_id" value={projectId} hidden />
+            <input name="project_id" value={project.id} hidden />
             <div className={styles.listingGrid}>
                 {Object.values(transcripts).map(({ id, title, file_url, selected }) => (
                     <Card key={id} title={title} disabled={selected} onClick={() => onCardClick(id)}>
