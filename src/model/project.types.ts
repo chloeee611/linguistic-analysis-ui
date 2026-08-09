@@ -4,3 +4,8 @@ export type Project = {
     title: string;
     description: string;
 };
+
+export type Children = {
+    id: string;
+    name: string;
+};

@@ -13,7 +13,7 @@ import { Spin } from "antd";
 
 import styles from "./project-dashboard.module.scss";
 
-type ProjectSummaryReturn = { data: ChartData };
+type ProjectSummaryReturn = { keys: Record<string, string>; data: ChartData };
 
 export const ProjectDashboard = () => {
     const [projectSummary, setProjectSummary] = useState<ProjectSummaryReturn>();
@@ -58,11 +58,11 @@ export const ProjectDashboard = () => {
                     <NavLink to={`/projects/${project.id}/transcripts/upload`}>Upload</NavLink>
                 </Button>
             </div>
-            <Heading level={2}>Transcripts</Heading>
+            <Heading level={2}>Lex Rare For Children</Heading>
 
             {projectSummary && (
                 <LineChart
-                    style={{ width: "100%", maxWidth: "700px", height: "100%", maxHeight: "50vh", aspectRatio: 1.618 }}
+                    style={{ width: "100%", height: "100%", maxHeight: "50vh", aspectRatio: 1.618 }}
                     responsive
                     data={projectSummary.data}
                     margin={{
@@ -73,7 +73,7 @@ export const ProjectDashboard = () => {
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" stroke="#52525b" />
+                    <XAxis dataKey="age" stroke="#52525b" />
                     <YAxis width="auto" stroke="#52525b" />
                     <Tooltip
                         cursor={{
@@ -85,15 +85,18 @@ export const ProjectDashboard = () => {
                         }}
                     />
                     <Legend />
-                    <Line
-                        type="monotone"
-                        dataKey="CHI"
-                        stroke="#8884d8"
-                        dot={{
-                            fill: "#fff",
-                        }}
-                        activeDot={{ r: 8, stroke: "#fff" }}
-                    />
+
+                    {Object.entries(projectSummary.keys).map(([name, color]) => (
+                        <Line
+                            type="monotone"
+                            dataKey={name}
+                            stroke={color}
+                            dot={{
+                                fill: "#fff",
+                            }}
+                            connectNulls
+                        />
+                    ))}
                 </LineChart>
             )}
         </div>
