@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { Paragraph } from "@/components/paragraph";
 import { Project } from "@/model/project.types";
 import { Heading } from "@/components/heading";
+import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
@@ -16,12 +17,12 @@ export const CreateEditProject = () => {
     const [currentChildren, setCurrentChildren] = useState<string[]>([]);
 
     const navigate = useNavigate();
+    const { token } = useUser();
 
     const callCreateProject = async (event: SubmitEvent) => {
         try {
             event.preventDefault();
 
-            const token = localStorage.getItem("token");
             const formObject = parseFormData<Project>(event);
 
             const { data, status } = await api.post(
@@ -29,7 +30,7 @@ export const CreateEditProject = () => {
                 { ...formObject, children: currentChildren },
                 {
                     headers: { Authorization: `Bearer ${token}` },
-                },
+                }
             );
 
             if (status === 201) {

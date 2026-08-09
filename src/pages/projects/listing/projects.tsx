@@ -6,6 +6,7 @@ import { Paragraph } from "@/components/paragraph";
 import { Project } from "@/model/project.types";
 import { NavLink } from "@/components/nav-link";
 import { Heading } from "@/components/heading";
+import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
 
@@ -16,11 +17,10 @@ export const Projects = () => {
     // const [wordCount, setWordCount] = useState(null);
 
     const navigate = useNavigate();
+    const { token } = useUser();
 
     useEffect(() => {
         const loadProject = async () => {
-            const token = localStorage.getItem("token");
-
             try {
                 const { data } = await api.get<Project[]>("/projects", {
                     headers: { Authorization: `Bearer ${token}` },
@@ -33,28 +33,7 @@ export const Projects = () => {
         };
 
         loadProject();
-    }, [navigate]);
-
-    // const analyseWordCount = async (transcriptName: string) => {
-    //     const token = localStorage.getItem("token");
-    //     const { data } = await api.post(
-    //         `analysis/frequency/${transcriptName}`,
-    //         {},
-    //         {
-    //             headers: { Authorization: `Bearer ${token}` },
-    //         },
-    //     );
-    //     return data;
-    // };
-
-    // const callAnalyseWordCount = async (transcriptName: string) => {
-    //     try {
-    //         const result = await analyseWordCount(transcriptName);
-    //         setWordCount(result.wordCount);
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
+    }, [navigate, token]);
 
     return (
         <div className={styles.container}>
@@ -73,12 +52,6 @@ export const Projects = () => {
                     </Card>
                 ))}
             </div>
-
-            {/* <h3>Results</h3>
-            <Paragraph>Word count: {wordCount}</Paragraph>
-            <Button onClick={() => callAnalyseWordCount("010920.cha")}>
-                Analyse Word Count
-            </Button> */}
         </div>
     );
 };

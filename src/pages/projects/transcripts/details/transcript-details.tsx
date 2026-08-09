@@ -5,6 +5,7 @@ import { api, handleError } from "@/api/api";
 import { Pagination } from "@/components/pagination";
 import { AxiosError } from "axios";
 import { Heading } from "@/components/heading";
+import { useUser } from "@/hooks/user.hooks";
 
 export const TranscriptDetails = () => {
     const { projectId, transcriptId } = useParams();
@@ -13,10 +14,10 @@ export const TranscriptDetails = () => {
     const [transcriptContent, setTranscriptContent] = useState<TranscriptContent>();
 
     const navigate = useNavigate();
+    const { token } = useUser();
 
     const getTranscript = useCallback(async () => {
         try {
-            const token = localStorage.getItem("token");
             const { data } = await api.get<Transcript>(`/projects/${projectId}/transcripts/${transcriptId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -24,13 +25,11 @@ export const TranscriptDetails = () => {
         } catch (error) {
             handleError(error as AxiosError, navigate);
         }
-    }, [projectId, transcriptId, navigate]);
+    }, [projectId, transcriptId, navigate, token]);
 
     const getTranscriptContent = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
             try {
-                const token = localStorage.getItem("token");
-
                 const { data } = await api.get<TranscriptContent>(
                     `/projects/${projectId}/transcripts/${transcriptId}/content`,
                     {
@@ -39,7 +38,7 @@ export const TranscriptDetails = () => {
                             page,
                             pageSize,
                         },
-                    },
+                    }
                 );
 
                 setTranscriptContent(data);
@@ -47,7 +46,7 @@ export const TranscriptDetails = () => {
                 handleError(error as AxiosError, navigate);
             }
         },
-        [projectId, transcriptId, navigate],
+        [projectId, transcriptId, navigate, token]
     );
 
     useEffect(() => {

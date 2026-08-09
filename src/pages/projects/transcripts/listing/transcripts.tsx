@@ -5,6 +5,7 @@ import { useParams } from "react-router";
 import { Project } from "@/model/project.types";
 import { NavLink } from "@/components/nav-link";
 import { Heading } from "@/components/heading";
+import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
 import { api } from "@/api/api";
@@ -17,17 +18,17 @@ export const Transcripts = () => {
     const [, setProject] = useState<Project>();
     const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
+    const { token } = useUser();
+
     const getProject = useCallback(async () => {
-        const token = localStorage.getItem("token");
         const { data } = await api.get<Project>(`/projects/${projectId}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return data;
-    }, [projectId]);
+    }, [projectId, token]);
 
     const getTranscripts = useCallback(async () => {
         try {
-            const token = localStorage.getItem("token");
             const { data } = await api.get<Transcript[]>(`/projects/${projectId}/transcripts`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -36,7 +37,7 @@ export const Transcripts = () => {
             console.error("Failed to request transcript", error);
             throw error;
         }
-    }, [projectId]);
+    }, [projectId, token]);
 
     useEffect(() => {
         const loadProject = async () => {

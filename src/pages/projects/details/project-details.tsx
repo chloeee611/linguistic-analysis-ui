@@ -9,6 +9,7 @@ import { ChartData } from "recharts/types/state/chartDataSlice";
 import { Heading } from "@/components/heading";
 import { Project } from "@/model/project.types";
 import { NavLink } from "@/components/nav-link";
+import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
 
@@ -24,10 +25,10 @@ export const ProjectDetails = () => {
     const [projectSummary, setProjectSummary] = useState<ProjectSummaryReturn>();
 
     const navigate = useNavigate();
+    const { token } = useUser();
 
     const getProject = useCallback(async () => {
         try {
-            const token = localStorage.getItem("token");
             const { data } = await api.get<Project>(`/projects/${projectId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -35,11 +36,10 @@ export const ProjectDetails = () => {
         } catch (error) {
             handleError(error as AxiosError, navigate);
         }
-    }, [projectId, navigate]);
+    }, [projectId, navigate, token]);
 
     const getTranscript = useCallback(async () => {
         try {
-            const token = localStorage.getItem("token");
             const { data } = await api.get<Transcript[]>(`/projects/${projectId}/transcripts`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -47,11 +47,10 @@ export const ProjectDetails = () => {
         } catch (error) {
             handleError(error as AxiosError, navigate);
         }
-    }, [projectId, navigate]);
+    }, [projectId, navigate, token]);
 
     const getProjectSummary = useCallback(async () => {
         try {
-            const token = localStorage.getItem("token");
             const { data } = await api.get<ProjectSummaryReturn>(`/projects/${projectId}/dashboard`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -59,7 +58,7 @@ export const ProjectDetails = () => {
         } catch (error) {
             handleError(error as AxiosError, navigate);
         }
-    }, [projectId, navigate]);
+    }, [projectId, navigate, token]);
 
     useEffect(() => {
         const loadProject = async () => {

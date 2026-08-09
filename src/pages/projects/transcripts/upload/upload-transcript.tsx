@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router";
 import { TranscriptUploadTask } from "@/model/task.types";
 import { Progress } from "antd";
 import { Heading } from "@/components/heading";
+import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Form } from "@/components/form";
 import { api } from "@/api/api";
@@ -18,6 +19,7 @@ export const UploadTranscript = () => {
     const [uploadStatus, setUploadStatus] = useState<TranscriptUploadTask["status"]>("pending");
 
     const navigate = useNavigate();
+    const { token } = useUser();
 
     const callUploadTranscript = async (event: SubmitEvent) => {
         event.preventDefault(); // Stop page from refreshing
@@ -28,8 +30,6 @@ export const UploadTranscript = () => {
         }
 
         const formData = new FormData(event.target);
-
-        const token = localStorage.getItem("token");
 
         const { data, status } = await api.post(`/projects/${projectId}/transcripts`, formData, {
             headers: {
@@ -47,8 +47,6 @@ export const UploadTranscript = () => {
         if (!taskLocation) {
             return;
         }
-
-        const token = localStorage.getItem("token");
 
         if (uploadStatus === "failed" || uploadStatus === "success") {
             return;
@@ -83,7 +81,7 @@ export const UploadTranscript = () => {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [taskLocation, total, navigate, projectId, uploadStatus]);
+    }, [taskLocation, total, navigate, projectId, uploadStatus, token]);
 
     return (
         <div className={styles.container}>

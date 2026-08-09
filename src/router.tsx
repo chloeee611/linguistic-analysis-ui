@@ -20,11 +20,11 @@ function Router() {
     return (
         <Routes>
             {/* Index is empty path */}
-            <Route path="home" element={<Landing />} />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-
             <Route element={<NavMenu />}>
+                <Route path="home" element={<Landing />} />
+                <Route path="login" element={<Login />} />
+                <Route path="register" element={<Register />} />
+
                 <Route index element={<Dashboard />} />
 
                 <Route path="projects">

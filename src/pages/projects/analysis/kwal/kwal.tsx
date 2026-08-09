@@ -5,6 +5,7 @@ import { api, handleError } from "@/api/api";
 import { parseFormData } from "@/helpers/form.helpers";
 import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
+import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Form } from "@/components/form";
@@ -25,11 +26,10 @@ export const Kwal = () => {
 
     const { projectId } = useParams();
     const navigate = useNavigate();
+    const { token } = useUser();
 
     useEffect(() => {
         const loadTranscripts = async () => {
-            const token = localStorage.getItem("token");
-
             try {
                 const { data } = await api.get<Transcript[]>(`/projects/${projectId}/transcripts`, {
                     headers: { Authorization: `Bearer ${token}` },
@@ -42,7 +42,7 @@ export const Kwal = () => {
                             ...transcript,
                             selected: false,
                         },
-                    ]),
+                    ])
                 );
 
                 setTranscripts(transcriptLookup);
@@ -52,7 +52,7 @@ export const Kwal = () => {
         };
 
         loadTranscripts();
-    }, [projectId, navigate]);
+    }, [projectId, navigate, token]);
 
     const onCardClick = (id: string) => {
         const currentTranscript = transcripts[id];
@@ -74,8 +74,6 @@ export const Kwal = () => {
                 .filter(({ selected }) => selected)
                 .map(({ id, file_url }) => ({ id, file_url }));
 
-            const token = localStorage.getItem("token");
-
             await api.post(`/analysis/kwal`, formObject, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -92,12 +90,7 @@ export const Kwal = () => {
             <input name="project_id" value={projectId} hidden />
             <div className={styles.listingGrid}>
                 {Object.values(transcripts).map(({ id, title, file_url, selected }) => (
-                    <Card
-                        key={id}
-                        title={title}
-                        disabled={selected}
-                        onClick={() => onCardClick(id)}
-                    >
+                    <Card key={id} title={title} disabled={selected} onClick={() => onCardClick(id)}>
                         <Paragraph>{file_url}</Paragraph>
                     </Card>
                 ))}

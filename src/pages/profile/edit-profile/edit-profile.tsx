@@ -3,6 +3,7 @@ import { api, handleError } from "@/api/api";
 import { useNavigate } from "react-router";
 import { InputProps } from "@/components/input/input";
 import { AxiosError } from "axios";
+import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
@@ -37,11 +38,10 @@ const fields: Field[] = [
 export const EditProfile = () => {
     const [user, setUser] = useState<Partial<User>>();
     const navigate = useNavigate();
+    const { token } = useUser();
 
     useEffect(() => {
         const loadProfile = async () => {
-            const token = localStorage.getItem("token");
-
             try {
                 const { data } = await api.get<User>("/users/me", {
                     headers: { Authorization: `Bearer ${token}` },
@@ -54,7 +54,7 @@ export const EditProfile = () => {
         };
 
         loadProfile();
-    }, [navigate]);
+    }, [navigate, token]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -65,9 +65,7 @@ export const EditProfile = () => {
         }));
     };
 
-    const callEditProfile = async (
-        event: React.SyntheticEvent<HTMLFormElement>,
-    ) => {
+    const callEditProfile = async (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         if (!user) {
@@ -76,8 +74,6 @@ export const EditProfile = () => {
         }
 
         try {
-            const token = localStorage.getItem("token");
-
             await api.put(
                 "/users/me",
                 {
@@ -89,7 +85,7 @@ export const EditProfile = () => {
                 },
                 {
                     headers: { Authorization: `Bearer ${token}` },
-                },
+                }
             );
 
             navigate("/profile");
@@ -102,22 +98,20 @@ export const EditProfile = () => {
         <div className={styles.container}>
             <Form onSubmit={callEditProfile}>
                 <div className={styles.fieldContainer}>
-                    {fields.map(
-                        ({ label, property, type, disabled, required }) => (
-                            <div className={styles.field}>
-                                <Label>{label}</Label>
-                                <Input
-                                    name={property}
-                                    className={styles.property}
-                                    type={type}
-                                    disabled={disabled}
-                                    onChange={handleChange}
-                                    value={user?.[property]}
-                                    required={required}
-                                />
-                            </div>
-                        ),
-                    )}
+                    {fields.map(({ label, property, type, disabled, required }) => (
+                        <div className={styles.field}>
+                            <Label>{label}</Label>
+                            <Input
+                                name={property}
+                                className={styles.property}
+                                type={type}
+                                disabled={disabled}
+                                onChange={handleChange}
+                                value={user?.[property]}
+                                required={required}
+                            />
+                        </div>
+                    ))}
                 </div>
                 <Button htmlType="submit">Save</Button>
             </Form>

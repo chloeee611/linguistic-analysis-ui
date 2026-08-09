@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { NavLink } from "@/components/nav-link";
+import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Label } from "@/components/label";
 import { User } from "@/model/user.types";
@@ -28,11 +29,10 @@ const fields: Field[] = [
 export const ViewProfile = () => {
     const [user, setUser] = useState<User>();
     const navigate = useNavigate();
+    const { token } = useUser();
 
     useEffect(() => {
         const loadProfile = async () => {
-            const token = localStorage.getItem("token");
-
             try {
                 const { data } = await api.get<User>("/users/me", {
                     headers: { Authorization: `Bearer ${token}` },
@@ -45,7 +45,7 @@ export const ViewProfile = () => {
         };
 
         loadProfile();
-    }, [navigate]);
+    }, [navigate, token]);
 
     return (
         <div className={styles.container}>
@@ -56,9 +56,7 @@ export const ViewProfile = () => {
                 {fields.map(({ label, property }) => (
                     <div className={styles.field}>
                         <Label>{label}</Label>
-                        <Paragraph className={styles.property}>
-                            {user?.[property]}
-                        </Paragraph>
+                        <Paragraph className={styles.property}>{user?.[property]}</Paragraph>
                     </div>
                 ))}
             </div>
