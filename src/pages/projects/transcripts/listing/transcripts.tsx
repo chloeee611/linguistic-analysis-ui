@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Spin, Tabs, TabsProps } from "antd";
 import { useNavigate } from "react-router";
 import { Transcript } from "@/model/transcript.types";
 import { useProject } from "@/hooks/projects.hooks";
@@ -8,13 +9,16 @@ import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { Spin } from "antd";
 import { api } from "@/api/api";
 
 import styles from "./transcripts.module.scss";
 
+type TranscriptWithChild = Transcript & {
+    child_name: string;
+};
+
 export const Transcripts = () => {
-    const [transcripts, setTranscripts] = useState<Transcript[]>([]);
+    const [transcripts, setTranscripts] = useState<TranscriptWithChild[]>([]);
 
     const navigate = useNavigate();
     const { token } = useUser();
@@ -26,7 +30,7 @@ export const Transcripts = () => {
         }
 
         try {
-            const { data } = await api.get<Transcript[]>(`/projects/${project.id}/transcripts`, {
+            const { data } = await api.get<TranscriptWithChild[]>(`/projects/${project.id}/transcripts`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             return data;
@@ -45,6 +49,47 @@ export const Transcripts = () => {
         loadTranscripts();
     }, [getTranscripts]);
 
+    const transcriptsChildLookup = useMemo(() => {
+        return transcripts.reduce<Record<TranscriptWithChild["child_id"], TranscriptWithChild[]>>((acc, transcript) => {
+            if (transcript.child_id in acc) {
+                acc[transcript.child_id].push(transcript);
+            } else {
+                acc[transcript.child_id] = [transcript];
+            }
+            return acc;
+        }, {});
+    }, [transcripts]);
+
+    const items = useMemo<TabsProps["items"]>(() => {
+        if (!project) {
+            return;
+        }
+
+        return Object.keys(transcriptsChildLookup)
+            .toSorted()
+            .map((childId) => {
+                const childTranscripts = transcriptsChildLookup[childId];
+
+                return {
+                    key: childId,
+                    label: childTranscripts[0].child_name,
+                    children: (
+                        <div className={styles.listingGrid}>
+                            {childTranscripts.map(({ id, title, file_url }) => (
+                                <Card
+                                    key={id}
+                                    title={title}
+                                    onClick={() => navigate(`/projects/${project.id}/transcripts/${id}`)}
+                                >
+                                    <Paragraph>{file_url}</Paragraph>
+                                </Card>
+                            ))}
+                        </div>
+                    ),
+                };
+            });
+    }, [navigate, project, transcriptsChildLookup]);
+
     if (!project) {
         return <Spin />;
     }
@@ -52,19 +97,12 @@ export const Transcripts = () => {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <Heading level={1}>Project {project.id} Details</Heading>
+                <Heading level={1}>Transcripts</Heading>
                 <Button>
                     <NavLink to={`/projects/${project.id}/transcripts/upload`}>Upload</NavLink>
                 </Button>
             </div>
-            <Heading level={2}>Transcripts</Heading>
-            <div className={styles.listingGrid}>
-                {transcripts.map(({ id, title, file_url }) => (
-                    <Card key={id} title={title} onClick={() => navigate(`/projects/${project.id}/transcripts/${id}`)}>
-                        <Paragraph>{file_url}</Paragraph>
-                    </Card>
-                ))}
-            </div>
+            <Tabs items={items} />
         </div>
     );
 };

@@ -6,6 +6,7 @@ export type Transcript = {
     title: string;
     file_url: string;
     metadata: Record<string, unknown>;
+    child_id: string;
 };
 
 export type SelectableTranscript = Transcript & {

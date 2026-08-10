@@ -86,7 +86,7 @@ export const ProjectDashboard = () => {
                     />
                     <Legend />
 
-                    {Object.entries(projectSummary.keys).map(([name, color]) => (
+                    {Object.entries(projectSummary.keys ?? {}).map(([name, color]) => (
                         <Line
                             type="monotone"
                             dataKey={name}

@@ -1,7 +1,8 @@
-import { GetProp, Progress, Select, Spin, Upload, UploadFile, UploadProps } from "antd";
+import { GetProp, Progress, Select, Spin, Steps, Upload, UploadFile, UploadProps } from "antd";
 import { SubmitEvent, useEffect, useMemo, useState } from "react";
 import { TranscriptUploadTask } from "@/model/task.types";
 import { UploadOutlined } from "@ant-design/icons";
+import { BaseStepsProps } from "antd/es/steps";
 import { useNavigate } from "react-router";
 import { useProject } from "@/hooks/projects.hooks";
 import { Paragraph } from "@/components/paragraph";
@@ -15,6 +16,28 @@ import { api } from "@/api/api";
 import styles from "./upload-transcript.module.scss";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
+const getUploadStatus = (
+    currentStatus: TranscriptUploadTask["status"],
+    fileCount: number
+): { current: BaseStepsProps["current"]; status: BaseStepsProps["status"] } => {
+    switch (currentStatus) {
+        case "pending":
+            if (fileCount > 0) {
+                return { current: 1, status: "process" };
+            } else {
+                return { current: 0, status: "process" };
+            }
+        case "running":
+            return { current: 2, status: "process" };
+        case "failed":
+            return { current: 2, status: "error" };
+        case "cancelled":
+            return { current: 2, status: "error" };
+        case "success":
+            return { current: 2, status: "finish" };
+    }
+};
 
 export const UploadTranscript = () => {
     const [total, setTotal] = useState<number>();
@@ -126,6 +149,8 @@ export const UploadTranscript = () => {
         return () => clearInterval(interval);
     }, [taskLocation, total, navigate, project, uploadStatus, token]);
 
+    const stepProps = useMemo(() => getUploadStatus(uploadStatus, fileList.length), [uploadStatus, fileList.length]);
+
     if (project === undefined) {
         return <Spin />;
     }
@@ -155,6 +180,25 @@ export const UploadTranscript = () => {
             <Heading level={1}>Upload Project Transcript</Heading>
 
             <Form className={styles.form} onSubmit={callUploadTranscript}>
+                <Steps
+                    className={styles.steps}
+                    items={[
+                        {
+                            title: "Add Files",
+                            content: "Drag/click the box below",
+                        },
+                        {
+                            title: "Add Details",
+                            content: "Add a child and click Upload",
+                        },
+                        {
+                            title: "Upload Files",
+                            content: "Happens in the background",
+                        },
+                    ]}
+                    {...stepProps}
+                />
+
                 <Upload.Dragger {...uploadProps}>
                     {total !== undefined && progress !== undefined ? (
                         <div className={styles.progressContainer}>
