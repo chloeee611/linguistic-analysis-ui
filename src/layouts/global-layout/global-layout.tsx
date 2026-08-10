@@ -64,13 +64,15 @@ export const NavMenu = () => {
 
             <div className={styles.main}>
                 <div className={styles.header}>
-                    <ProjectMenu />
-
                     {user?.id ? (
-                        <div className={styles.user}>
-                            <Paragraph className={styles.userName}>{user.name}</Paragraph>
-                            <Paragraph className={styles.userEmail}>{user.email}</Paragraph>
-                        </div>
+                        <>
+                            <ProjectMenu />
+
+                            <div className={styles.user}>
+                                <Paragraph className={styles.userName}>{user.name}</Paragraph>
+                                <Paragraph className={styles.userEmail}>{user.email}</Paragraph>
+                            </div>
+                        </>
                     ) : (
                         <NavLink to="/login">
                             <Button type="secondary" gradient>

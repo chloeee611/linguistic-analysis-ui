@@ -4,6 +4,7 @@ import { useLocation } from "react-router";
 import { useProject } from "@/hooks/projects.hooks";
 import { NavLink } from "@/components/nav-link";
 import { useMemo } from "react";
+import { Button } from "../button";
 
 import styles from "./project-menu.module.scss";
 
@@ -73,6 +74,10 @@ export const ProjectMenu = () => {
     return project ? (
         <Menu className={styles.projectMenu} selectedKeys={[current]} mode="horizontal" items={projectItems} />
     ) : (
-        <div></div>
+        <NavLink to="/projects/create">
+            <Button type="secondary" gradient>
+                Create Project
+            </Button>
+        </NavLink>
     );
 };
