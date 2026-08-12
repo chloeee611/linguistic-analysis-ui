@@ -1,15 +1,19 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Spin, Tabs, TabsProps } from "antd";
+import { useCallback, useEffect, useState } from "react";
+import { PaginatedResults } from "@/model/pagination.types";
+import { api, handleError } from "@/api/api";
+import { Select, Spin } from "antd";
 import { useNavigate } from "react-router";
 import { Transcript } from "@/model/transcript.types";
+import { Pagination } from "@/components/pagination";
 import { useProject } from "@/hooks/projects.hooks";
+import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
+import { Children } from "@/model/project.types";
 import { NavLink } from "@/components/nav-link";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { api } from "@/api/api";
 
 import styles from "./transcripts.module.scss";
 
@@ -17,78 +21,83 @@ type TranscriptWithChild = Transcript & {
     child_name: string;
 };
 
+type FilterChildOption = { value: string; label: string };
+
 export const Transcripts = () => {
-    const [transcripts, setTranscripts] = useState<TranscriptWithChild[]>([]);
+    const [transcripts, setTranscripts] = useState<PaginatedResults<TranscriptWithChild>>();
+    const [currentChildren, setCurrentChildren] = useState<FilterChildOption[]>([]);
+    const [filteredChildren, setFilteredChildren] = useState<number[]>([]);
 
     const navigate = useNavigate();
     const { token } = useUser();
     const { project } = useProject();
 
-    const getTranscripts = useCallback(async () => {
-        if (project === undefined) {
-            return [];
-        }
-
-        try {
-            const { data } = await api.get<TranscriptWithChild[]>(`/projects/${project.id}/transcripts`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            return data;
-        } catch (error) {
-            console.error("Failed to request transcript", error);
-            throw error;
-        }
-    }, [project, token]);
-
-    useEffect(() => {
-        const loadTranscripts = async () => {
-            const transcriptData = await getTranscripts();
-            setTranscripts(transcriptData);
-        };
-
-        loadTranscripts();
-    }, [getTranscripts]);
-
-    const transcriptsChildLookup = useMemo(() => {
-        return transcripts.reduce<Record<TranscriptWithChild["child_id"], TranscriptWithChild[]>>((acc, transcript) => {
-            if (transcript.child_id in acc) {
-                acc[transcript.child_id].push(transcript);
-            } else {
-                acc[transcript.child_id] = [transcript];
-            }
-            return acc;
-        }, {});
-    }, [transcripts]);
-
-    const items = useMemo<TabsProps["items"]>(() => {
+    const getProjectChildren = useCallback(async () => {
         if (!project) {
             return;
         }
 
-        return Object.keys(transcriptsChildLookup)
-            .toSorted()
-            .map((childId) => {
-                const childTranscripts = transcriptsChildLookup[childId];
-
-                return {
-                    key: childId,
-                    label: childTranscripts[0].child_name,
-                    children: (
-                        <div className={styles.listingGrid}>
-                            {childTranscripts.map(({ id, title, file_url }) => (
-                                <Card
-                                    key={id}
-                                    title={title}
-                                    onClick={() => navigate(`/projects/${project.id}/transcripts/${id}`)}
-                                >
-                                    <Paragraph>{file_url}</Paragraph>
-                                </Card>
-                            ))}
-                        </div>
-                    ),
-                };
+        try {
+            const { data } = await api.get<Children[]>(`/projects/${project.id}/children`, {
+                headers: { Authorization: `Bearer ${token}` },
             });
-    }, [navigate, project, transcriptsChildLookup]);
+            return data;
+        } catch (error) {
+            handleError(error as AxiosError, navigate);
+        }
+    }, [project, navigate, token]);
+
+    useEffect(() => {
+        const loadProject = async () => {
+            const projectChildren = await getProjectChildren();
+
+            if (projectChildren) {
+                setCurrentChildren(projectChildren.map(({ id, name }) => ({ value: id, label: name })));
+            }
+        };
+
+        loadProject();
+    }, [project, getProjectChildren]);
+
+    const getTranscripts = useCallback(
+        async (page: number = 1, pageSize: number = 25) => {
+            if (project === undefined) {
+                return [];
+            }
+
+            console.log(`transcripts.tsx:68 || filteredChildren:`);
+
+            try {
+                const { data } = await api.get<PaginatedResults<TranscriptWithChild>>(
+                    `/projects/${project.id}/transcripts`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                        params: {
+                            page,
+                            pageSize,
+                            children:
+                                filteredChildren.length > 0 ? encodeURIComponent(filteredChildren.join(",")) : null,
+                        },
+                    }
+                );
+
+                if (data) {
+                    setTranscripts(data);
+                }
+            } catch (error) {
+                handleError(error as AxiosError, navigate);
+            }
+        },
+        [project, token, navigate, filteredChildren]
+    );
+
+    useEffect(() => {
+        const loadTranscripts = async () => {
+            await getTranscripts();
+        };
+
+        loadTranscripts();
+    }, [getTranscripts, filteredChildren]);
 
     if (!project) {
         return <Spin />;
@@ -102,7 +111,39 @@ export const Transcripts = () => {
                     <NavLink to={`/projects/${project.id}/transcripts/upload`}>Upload</NavLink>
                 </Button>
             </div>
-            <Tabs items={items} />
+            {transcripts && (
+                <>
+                    <Select
+                        mode="multiple"
+                        allowClear
+                        style={{ width: "100%" }}
+                        placeholder="Filter by children"
+                        onChange={setFilteredChildren}
+                        value={filteredChildren}
+                        options={currentChildren}
+                    />
+                    <div className={styles.listingGrid}>
+                        {transcripts.results.map(({ id, title, file_url }) => (
+                            <Card
+                                key={id}
+                                title={title}
+                                onClick={() => navigate(`/projects/${project.id}/transcripts/${id}`)}
+                            >
+                                <Paragraph>{file_url}</Paragraph>
+                            </Card>
+                        ))}
+                    </div>
+                    <Pagination
+                        current={transcripts.meta.page}
+                        total={transcripts.meta.total}
+                        showSizeChanger
+                        pageSizeOptions={[25, 50, 75, 100]}
+                        pageSize={transcripts.meta.size}
+                        onShowSizeChange={getTranscripts}
+                        onChange={getTranscripts}
+                    />
+                </>
+            )}
         </div>
     );
 };

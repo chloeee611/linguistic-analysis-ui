@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { Transcript, TranscriptContent } from "@/model/transcript.types";
+import { Transcript, TranscriptContentUtterance } from "@/model/transcript.types";
 import { useNavigate, useParams } from "react-router";
+import { PaginatedResults } from "@/model/pagination.types";
 import { api, handleError } from "@/api/api";
 import { Pagination } from "@/components/pagination";
 import { useProject } from "@/hooks/projects.hooks";
@@ -12,7 +13,7 @@ export const TranscriptDetails = () => {
     const { transcriptId } = useParams();
 
     const [transcript, setTranscript] = useState<Transcript>();
-    const [transcriptContent, setTranscriptContent] = useState<TranscriptContent>();
+    const [transcriptContent, setTranscriptContent] = useState<PaginatedResults<TranscriptContentUtterance>>();
 
     const navigate = useNavigate();
     const { token } = useUser();
@@ -40,7 +41,7 @@ export const TranscriptDetails = () => {
             }
 
             try {
-                const { data } = await api.get<TranscriptContent>(
+                const { data } = await api.get<PaginatedResults<TranscriptContentUtterance>>(
                     `/projects/${project.id}/transcripts/${transcriptId}/content`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
@@ -90,7 +91,7 @@ export const TranscriptDetails = () => {
             )}
             {transcriptContent && (
                 <div>
-                    {transcriptContent.content?.map((line, i) => (
+                    {transcriptContent.results?.map((line, i) => (
                         <p key={i}>
                             {line.speaker}: {line.utterance}
                         </p>

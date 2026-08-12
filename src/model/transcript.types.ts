@@ -1,5 +1,3 @@
-import { PaginationLinks, PaginationMeta } from "@/api/api";
-
 export type Transcript = {
     id: string;
     project_id: string;
@@ -29,12 +27,6 @@ export type TranscriptSpeaker = {
     corpus: string;
     languages_spoken: string[];
     participant_code: string;
-};
-
-export type TranscriptContent = {
-    content: TranscriptContentUtterance[];
-    links: PaginationLinks;
-    meta: PaginationMeta;
 };
 
 export type TranscriptContentUtterance = {
