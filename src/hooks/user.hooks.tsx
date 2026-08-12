@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, ReactNode, useMemo, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { api, handleError } from "@/api/api";
 import { User, UserJWT } from "@/model/user.types";
 import { useNavigate } from "react-router";
@@ -24,9 +24,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
     const navigate = useNavigate();
 
-    const token = useMemo(() => {
-        return localStorage.getItem("token");
-    }, []);
+    const token = localStorage.getItem("token");
 
     const login = useCallback(({ token }: UserJWT) => {
         localStorage.setItem("token", token);
@@ -51,10 +49,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             }
         };
 
-        if (token) {
+        if (token && !user) {
             getCurrentUser();
+        } else if (!token) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setUser(undefined);
         }
-    }, [token, navigate]);
+    }, [token, user, navigate]);
 
     return <UserContext value={{ user, token, login, logout }}>{children}</UserContext>;
 };
