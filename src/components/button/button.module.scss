@@ -19,7 +19,7 @@
 
 .button {
     border-radius: 20px;
-    transition-property: --top-color, --bottom-color, scale, background-color;
+    transition-property: --top-color, --bottom-color, scale, background-color, color, border-color;
     transition-duration: 0.3s;
     background-color: var(--top-color) !important;
     color: var(--text-color) !important;
@@ -54,6 +54,20 @@
             --text-color: var(--text-light-secondary);
             --top-color: var(--accent-tertiary);
             --bottom-color: var(--accent-light);
+        }
+    }
+
+    &.outline {
+        --text-color: var(--text-primary);
+        --top-color: transparent;
+        --bottom-color: transparent;
+        border: 1px solid var(--bg-color-accent) !important;
+
+        &:hover {
+            --text-color: var(--text-light-tertiary);
+            --top-color: var(--accent-tertiary);
+            --bottom-color: var(--accent-light);
+            border: 1px solid transparent !important;
         }
     }
 

@@ -2,12 +2,27 @@ import { parseFormData } from "../../helpers/form.helpers";
 import { User, UserJWT } from "../../model/user.types";
 import { useNavigate } from "react-router";
 import { SubmitEvent } from "react";
+import { NavLink } from "@/components/nav-link";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "../../components/button";
 import { Input } from "../../components/input";
 import { Label } from "../../components/label";
 import { Form } from "../../components/form";
 import { api } from "../../api/api";
+
+import styles from "./login.module.scss";
+
+const inputs = [
+    {
+        id: "username",
+        label: "Username",
+    },
+    {
+        id: "password",
+        label: "Password",
+        type: "password",
+    },
+];
 
 export const Login = () => {
     const navigate = useNavigate();
@@ -27,16 +42,25 @@ export const Login = () => {
     };
 
     return (
-        <div>
+        <div className={styles.container}>
             <h1>Login</h1>
             <Form onSubmit={callLogin}>
-                <Label>Username</Label>
-                <Input name="username" />
-                <Label>Password</Label>
-                <Input name="password" type="password" />
-                <Button htmlType="submit" type="primary">
-                    Login
-                </Button>
+                {inputs.map(({ id, label, type }) => (
+                    <>
+                        <Label htmlFor={id}>{label}</Label>
+                        <Input id={id} name={id} type={type} />
+                    </>
+                ))}
+                <div className={styles.buttons}>
+                    <Button htmlType="submit" type="primary">
+                        Login
+                    </Button>
+                    <NavLink to="/register">
+                        <Button htmlType="submit" type="outline">
+                            Register
+                        </Button>
+                    </NavLink>
+                </div>
             </Form>
         </div>
     );
