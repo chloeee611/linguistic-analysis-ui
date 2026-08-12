@@ -1,6 +1,7 @@
 import { SubmitEvent } from "react";
 import { useNavigate } from "react-router";
 import { UserJWT } from "../../model/user.types";
+import { Heading } from "@/components/heading";
 import { Button } from "../../components/button";
 import { Input } from "../../components/input";
 import { Label } from "../../components/label";
@@ -49,7 +50,7 @@ export const Register = () => {
 
     return (
         <div className={styles.container}>
-            <h1>Register</h1>
+            <Heading level={1}>Register</Heading>
             <Form onSubmit={callRegister}>
                 {inputs.map(({ id, label, type }) => (
                     <>

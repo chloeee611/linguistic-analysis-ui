@@ -1,8 +1,9 @@
 import { TranscriptDetails } from "./pages/projects/transcripts/details";
-import { CreateEditProject } from "./pages/projects/create-edit";
 import { UploadTranscript } from "./pages/projects/transcripts/upload";
 import { ProjectDashboard } from "./pages/projects/details";
+import { ProjectSettings } from "./pages/projects/settings";
 import { ProjectProvider } from "./hooks/projects.hooks";
+import { CreateProject } from "./pages/projects/create";
 import { Route, Routes } from "react-router";
 import { UserProvider } from "./hooks/user.hooks";
 import { Transcripts } from "./pages/projects/transcripts/listing";
@@ -39,10 +40,11 @@ function Router() {
 
                 <Route path="projects">
                     <Route index element={<Projects />} />
-                    <Route path="create" element={<CreateEditProject />} />
+                    <Route path="create" element={<CreateProject />} />
 
                     <Route path=":projectId">
                         <Route index element={<ProjectDashboard />} />
+                        <Route path="settings" element={<ProjectSettings />} />
 
                         <Route path="analysis">
                             <Route path="kwal" element={<Kwal />} />

@@ -12,7 +12,9 @@ import { Space } from "antd";
 import { Form } from "@/components/form";
 import { api } from "@/api/api";
 
-export const CreateEditProject = () => {
+import styles from "./create-project.module.scss";
+
+export const CreateProject = () => {
     const [currentChild, setCurrentChild] = useState<string>("");
     const [currentChildren, setCurrentChildren] = useState<string[]>([]);
 
@@ -45,7 +47,7 @@ export const CreateEditProject = () => {
     };
 
     return (
-        <div>
+        <div className={styles.container}>
             <Heading level={1}>Create Project</Heading>
 
             <Form onSubmit={callCreateProject}>
@@ -71,9 +73,11 @@ export const CreateEditProject = () => {
                 {currentChildren.map((child) => (
                     <Paragraph>{child}</Paragraph>
                 ))}
-                <Button htmlType="submit" type="primary">
-                    Create Project
-                </Button>
+                <div className={styles.buttons}>
+                    <Button htmlType="submit" type="primary">
+                        Create Project
+                    </Button>
+                </div>
             </Form>
         </div>
     );

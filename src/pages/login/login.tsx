@@ -3,6 +3,7 @@ import { User, UserJWT } from "../../model/user.types";
 import { useNavigate } from "react-router";
 import { SubmitEvent } from "react";
 import { NavLink } from "@/components/nav-link";
+import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "../../components/button";
 import { Input } from "../../components/input";
@@ -43,7 +44,7 @@ export const Login = () => {
 
     return (
         <div className={styles.container}>
-            <h1>Login</h1>
+            <Heading level={1}>Login</Heading>
             <Form onSubmit={callLogin}>
                 {inputs.map(({ id, label, type }) => (
                     <>
