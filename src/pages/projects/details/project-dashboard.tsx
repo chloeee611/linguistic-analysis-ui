@@ -1,6 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { useCallback, useEffect, useState } from "react";
 import { api, handleError } from "@/api/api";
+import { AnalysisType } from "@/model/analysis.types";
 import { useNavigate } from "react-router";
 import { useProject } from "@/hooks/projects.hooks";
 import { AxiosError } from "axios";
@@ -13,7 +14,10 @@ import { Spin } from "antd";
 
 import styles from "./project-dashboard.module.scss";
 
-type ProjectSummaryReturn = { keys: Record<string, string>; data: ChartData };
+type ProjectSummaryReturn = {
+    graphData: Record<AnalysisType, { keys: string[]; data: ChartData; title: string }>;
+    colourKeys: Record<string, string>;
+};
 
 export const ProjectDashboard = () => {
     const [projectSummary, setProjectSummary] = useState<ProjectSummaryReturn>();
@@ -46,7 +50,7 @@ export const ProjectDashboard = () => {
         loadProject();
     }, [project, getProjectSummary]);
 
-    if (!project) {
+    if (!project || !projectSummary) {
         return <Spin />;
     }
 
@@ -58,47 +62,56 @@ export const ProjectDashboard = () => {
                     <NavLink to={`/projects/${project.id}/transcripts/upload`}>Upload</NavLink>
                 </Button>
             </div>
-            <Heading level={2}>Lex Rare For Children</Heading>
 
-            {projectSummary && (
-                <LineChart
-                    style={{ width: "100%", height: "100%", maxHeight: "50vh", aspectRatio: 1.618 }}
-                    responsive
-                    data={projectSummary.data}
-                    margin={{
-                        top: 5,
-                        right: 0,
-                        left: 0,
-                        bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="age" stroke="#52525b" />
-                    <YAxis width="auto" stroke="#52525b" />
-                    <Tooltip
-                        cursor={{
-                            stroke: "#a8a29e",
-                        }}
-                        contentStyle={{
-                            backgroundColor: "#fafafa",
-                            borderColor: "#a8a29e",
-                        }}
-                    />
-                    <Legend />
+            <div className={styles.graphGrid}>
+                {Object.keys(projectSummary.graphData).map((type) => {
+                    const currentSummary = projectSummary.graphData[type as AnalysisType];
 
-                    {Object.entries(projectSummary.keys ?? {}).map(([name, color]) => (
-                        <Line
-                            type="monotone"
-                            dataKey={name}
-                            stroke={color}
-                            dot={{
-                                fill: "#fff",
-                            }}
-                            connectNulls
-                        />
-                    ))}
-                </LineChart>
-            )}
+                    return (
+                        <div className={styles.graph} key={type}>
+                            <Heading level={2}>{currentSummary.title}</Heading>
+
+                            <LineChart
+                                style={{ width: "100%", height: "100%", maxHeight: "50vh", aspectRatio: 1.618 }}
+                                responsive
+                                data={currentSummary.data}
+                                margin={{
+                                    top: 5,
+                                    right: 0,
+                                    left: 0,
+                                    bottom: 5,
+                                }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="age" stroke="#52525b" />
+                                <YAxis width="auto" stroke="#52525b" />
+                                <Tooltip
+                                    cursor={{
+                                        stroke: "#a8a29e",
+                                    }}
+                                    contentStyle={{
+                                        backgroundColor: "#fafafa",
+                                        borderColor: "#a8a29e",
+                                    }}
+                                />
+                                <Legend />
+
+                                {currentSummary.keys.map((name) => (
+                                    <Line
+                                        type="monotone"
+                                        dataKey={name}
+                                        stroke={projectSummary.colourKeys[name]}
+                                        dot={{
+                                            fill: "#fff",
+                                        }}
+                                        connectNulls
+                                    />
+                                ))}
+                            </LineChart>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 };
