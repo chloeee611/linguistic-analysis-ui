@@ -32,11 +32,11 @@ function Router() {
                     </UserProvider>
                 }
             >
-                <Route path="home" element={<Landing />} />
+                <Route index element={<Landing />} />
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
 
-                <Route index element={<Home />} />
+                <Route path="home" element={<Home />} />
 
                 <Route path="projects">
                     <Route index element={<Projects />} />

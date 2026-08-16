@@ -36,7 +36,7 @@ export const Login = () => {
             const { data } = await api.post<UserJWT>("/login", formObject);
             login(data);
 
-            navigate("/");
+            navigate("/home");
         } catch (error) {
             console.error("Could not load users", error);
         }

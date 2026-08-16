@@ -14,9 +14,9 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 const items: MenuItem[] = [
     {
-        key: "/",
+        key: "/home",
         icon: <HomeOutlined />,
-        label: <NavLink to="/">Home</NavLink>,
+        label: <NavLink to="/home">Home</NavLink>,
     },
     {
         key: "/projects",
