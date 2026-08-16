@@ -7,10 +7,6 @@ export type Transcript = {
     child_id: string;
 };
 
-export type SelectableTranscript = Transcript & {
-    selected: boolean;
-};
-
 export type TranscriptMetadata = {
     id: Record<string, TranscriptSpeaker>;
     date: string;

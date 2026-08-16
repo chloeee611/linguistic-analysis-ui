@@ -65,8 +65,6 @@ export const Transcripts = () => {
                 return [];
             }
 
-            console.log(`transcripts.tsx:68 || filteredChildren:`);
-
             try {
                 const { data } = await api.get<PaginatedResults<TranscriptWithChild>>(
                     `/projects/${project.id}/transcripts`,

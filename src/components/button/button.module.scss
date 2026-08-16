@@ -29,7 +29,7 @@
         background: linear-gradient(178deg, var(--top-color) 0%, var(--bottom-color) 88%) !important;
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
         scale: 1.03;
     }
 
@@ -42,6 +42,13 @@
             --text-color: var(--text-light-secondary);
             --top-color: var(--accent-secondary);
             --bottom-color: var(--accent-tertiary);
+        }
+
+        &:disabled {
+            --text-color: var(--text-tertiary);
+            --top-color: var(--bg-color-tertiary);
+            border: 1px solid var(--text-tertiary) !important;
+            --bottom-color: var(--accent-light);
         }
     }
 
@@ -65,9 +72,16 @@
 
         &:hover {
             --text-color: var(--text-light-tertiary);
-            --top-color: var(--accent-tertiary);
+            --top-color: var(--bg-color-tertiary);
             --bottom-color: var(--accent-light);
             border: 1px solid transparent !important;
+        }
+
+        &:disabled {
+            --text-color: var(--text-tertiary);
+            --top-color: var(--bg-color-tertiary);
+            border: 1px solid var(--text-tertiary) !important;
+            --bottom-color: var(--accent-light);
         }
     }
 
