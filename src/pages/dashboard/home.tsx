@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api, handleError } from "@/api/api";
 import { useNavigate } from "react-router";
 import { AxiosError } from "axios";
-import { Statistic } from "antd";
+import { Statistic } from "@/components/statistic";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Card } from "@/components/card";
