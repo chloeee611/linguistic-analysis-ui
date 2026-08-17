@@ -10,6 +10,7 @@ import { Label } from "@/components/label";
 import { User } from "@/model/user.types";
 
 import styles from "./view-profile.module.scss";
+import { Heading } from "@/components/heading";
 
 type Field = {
     label: string;
@@ -49,9 +50,12 @@ export const ViewProfile = () => {
 
     return (
         <div className={styles.container}>
-            <Button>
-                <NavLink to="/profile/edit">Edit</NavLink>
-            </Button>
+            <div className={styles.header}>
+                <Heading level={1}>Profile</Heading>
+                <Button>
+                    <NavLink to="/profile/edit">Edit</NavLink>
+                </Button>
+            </div>
             <div className={styles.fieldContainer}>
                 {fields.map(({ label, property }) => (
                     <div className={styles.field}>

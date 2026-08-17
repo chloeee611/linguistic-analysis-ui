@@ -11,6 +11,7 @@ import { User } from "@/model/user.types";
 import { Form } from "@/components/form";
 
 import styles from "./edit-profile.module.scss";
+import { Heading } from "@/components/heading";
 
 type Field = {
     type: InputProps["type"];
@@ -95,26 +96,27 @@ export const EditProfile = () => {
     };
 
     return (
-        <div className={styles.container}>
-            <Form onSubmit={callEditProfile}>
-                <div className={styles.fieldContainer}>
-                    {fields.map(({ label, property, type, disabled, required }) => (
-                        <div className={styles.field}>
-                            <Label>{label}</Label>
-                            <Input
-                                name={property}
-                                className={styles.property}
-                                type={type}
-                                disabled={disabled}
-                                onChange={handleChange}
-                                value={user?.[property]}
-                                required={required}
-                            />
-                        </div>
-                    ))}
-                </div>
+        <Form className={styles.container} onSubmit={callEditProfile}>
+            <div className={styles.header}>
+                <Heading level={1}>Profile</Heading>
                 <Button htmlType="submit">Save</Button>
-            </Form>
-        </div>
+            </div>
+            <div className={styles.fieldContainer}>
+                {fields.map(({ label, property, type, disabled, required }) => (
+                    <div className={styles.field}>
+                        <Label>{label}</Label>
+                        <Input
+                            name={property}
+                            className={styles.property}
+                            type={type}
+                            disabled={disabled}
+                            onChange={handleChange}
+                            value={user?.[property]}
+                            required={required}
+                        />
+                    </div>
+                ))}
+            </div>
+        </Form>
     );
 };
