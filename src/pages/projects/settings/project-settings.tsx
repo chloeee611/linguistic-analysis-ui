@@ -1,18 +1,18 @@
 import { SubmitEvent, useCallback, useEffect, useState } from "react";
 import { Children, Project } from "@/model/project.types";
-import { api, handleError } from "@/api/api";
 import { parseFormData } from "@/helpers/form.helpers";
 import { useNavigate } from "react-router";
-import { Space, Spin } from "antd";
 import { useProject } from "@/hooks/projects.hooks";
-import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
+import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
+import { Space } from "antd";
 import { Form } from "@/components/form";
+import { Spin } from "@/components/spin";
 
 import styles from "./project-settings.module.scss";
 
@@ -24,21 +24,20 @@ export const ProjectSettings = () => {
     const navigate = useNavigate();
     const { token } = useUser();
     const { project } = useProject();
+    const { loading, callApi } = useApi();
 
     const getProjectChildren = useCallback(async () => {
         if (!project) {
             return;
         }
 
-        try {
-            const { data } = await api.get<Children[]>(`/projects/${project.id}/children`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            return data;
-        } catch (error) {
-            handleError(error as AxiosError, navigate);
-        }
-    }, [project, navigate, token]);
+        const { data } = await callApi<Children[]>({
+            method: "GET",
+            url: `/projects/${project.id}/children`,
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return data;
+    }, [project, token, callApi]);
 
     useEffect(() => {
         const loadProject = async () => {
@@ -58,13 +57,12 @@ export const ProjectSettings = () => {
 
             const formObject = parseFormData<Project>(event);
 
-            const { data, status } = await api.put(
-                `/projects/${project?.id}`,
-                { ...formObject, children: newChildren },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+            const { data, status } = await callApi<{ id: string }>({
+                method: "PUT",
+                url: `/projects/${project?.id}`,
+                data: { ...formObject, children: newChildren },
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
             if (status === 201) {
                 console.log("Project created successfully");
@@ -77,7 +75,7 @@ export const ProjectSettings = () => {
         }
     };
 
-    if (!project) {
+    if (loading || !project) {
         return <Spin />;
     }
 
@@ -105,7 +103,6 @@ export const ProjectSettings = () => {
                         Add Child
                     </Button>
                 </Space.Compact>
-                {/* {project} */}
                 {currentChildren.map((child) => (
                     <Paragraph>{child.name}</Paragraph>
                 ))}

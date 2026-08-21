@@ -15,14 +15,13 @@ import { NavMenu } from "./layouts/global-layout/global-layout";
 import { Landing } from "./pages/landing";
 import { Login } from "./pages/login";
 import { Kwal } from "./pages/projects/analysis/kwal";
-import { Home } from "./pages/dashboard";
+import { Home } from "./pages/home";
 
 import "./App.css";
 
 function Router() {
     return (
         <Routes>
-            {/* Index is empty path */}
             <Route
                 element={
                     <UserProvider>

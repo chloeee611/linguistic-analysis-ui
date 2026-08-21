@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PaginatedResults } from "@/model/pagination.types";
-import { api, handleError } from "@/api/api";
-import { useNavigate } from "react-router";
-import { Spin, Steps } from "antd";
 import { Transcript } from "@/model/transcript.types";
 import { Pagination } from "@/components/pagination";
 import { useProject } from "@/hooks/projects.hooks";
-import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
+import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
+import { Steps } from "antd";
 import { Card } from "@/components/card";
+import { Spin } from "@/components/spin";
 
 import styles from "./kwal.module.scss";
 
@@ -42,9 +41,9 @@ export const Kwal = () => {
     const [selectedTranscripts, setSelectedTranscripts] = useState<Record<string, Transcript>>({});
     const [paginatedTranscripts, setPaginatedTranscripts] = useState<PaginatedResults<Transcript>>();
 
-    const navigate = useNavigate();
     const { token } = useUser();
     const { project } = useProject();
+    const { loading, callApi } = useApi();
 
     const loadTranscripts = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
@@ -52,32 +51,30 @@ export const Kwal = () => {
                 return;
             }
 
-            try {
-                const { data } = await api.get<PaginatedResults<Transcript>>(`/projects/${project.id}/transcripts`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: {
-                        page,
-                        pageSize,
+            const { data } = await callApi<PaginatedResults<Transcript>>({
+                method: "GET",
+                url: `/projects/${project.id}/transcripts`,
+                headers: { Authorization: `Bearer ${token}` },
+                params: {
+                    page,
+                    pageSize,
+                },
+            });
+
+            const transcriptLookup = Object.fromEntries(
+                data.results.map((transcript) => [
+                    transcript.id,
+                    {
+                        ...transcript,
+                        selected: false,
                     },
-                });
+                ])
+            );
 
-                const transcriptLookup = Object.fromEntries(
-                    data.results.map((transcript) => [
-                        transcript.id,
-                        {
-                            ...transcript,
-                            selected: false,
-                        },
-                    ])
-                );
-
-                setTranscriptsLookup(transcriptLookup);
-                setPaginatedTranscripts(data);
-            } catch (err) {
-                handleError(err as AxiosError, navigate);
-            }
+            setTranscriptsLookup(transcriptLookup);
+            setPaginatedTranscripts(data);
         },
-        [project, navigate, token]
+        [project, token, callApi]
     );
 
     useEffect(() => {
@@ -100,27 +97,23 @@ export const Kwal = () => {
     };
 
     const onSubmit = async () => {
-        try {
-            if (!project) {
-                return;
-            }
-
-            await api.post(
-                `/analysis/kwal`,
-                {
-                    search_utterance: [searchUtterance],
-                    // project_id: project.id,
-                    transcripts: Object.values(selectedTranscripts).map(({ id, file_url }) => ({ id, file_url })),
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-
-            // navigate("/");
-        } catch (error) {
-            handleError(error as AxiosError, navigate);
+        if (!project) {
+            return;
         }
+
+        await callApi({
+            method: "POST",
+            url: `/analysis/kwal`,
+            data: {
+                search_utterance: [searchUtterance],
+                // project_id: project.id,
+                transcripts: Object.values(selectedTranscripts).map(({ id, file_url }) => ({ id, file_url })),
+            },
+
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // navigate("/");
     };
 
     const nextDisabled = useMemo(() => {
@@ -132,7 +125,7 @@ export const Kwal = () => {
         }
     }, [currentStep, selectedTranscripts]);
 
-    if (!project || !transcriptsLookup || !paginatedTranscripts) {
+    if (loading || !project || !transcriptsLookup || !paginatedTranscripts) {
         return <Spin />;
     }
 

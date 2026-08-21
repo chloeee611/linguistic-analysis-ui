@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { Transcript, TranscriptContentUtterance } from "@/model/transcript.types";
-import { useNavigate, useParams } from "react-router";
 import { PaginatedResults } from "@/model/pagination.types";
-import { api, handleError } from "@/api/api";
 import { Pagination } from "@/components/pagination";
 import { useProject } from "@/hooks/projects.hooks";
-import { AxiosError } from "axios";
+import { useParams } from "react-router";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
+import { useApi } from "@/hooks/api.hooks";
+import { Spin } from "@/components/spin";
 
 export const TranscriptDetails = () => {
     const { transcriptId } = useParams();
@@ -15,24 +15,22 @@ export const TranscriptDetails = () => {
     const [transcript, setTranscript] = useState<Transcript>();
     const [transcriptContent, setTranscriptContent] = useState<PaginatedResults<TranscriptContentUtterance>>();
 
-    const navigate = useNavigate();
     const { token } = useUser();
     const { project } = useProject();
+    const { loading, callApi } = useApi();
 
     const getTranscript = useCallback(async () => {
         if (!project) {
             return;
         }
 
-        try {
-            const { data } = await api.get<Transcript>(`/projects/${project.id}/transcripts/${transcriptId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setTranscript(data);
-        } catch (error) {
-            handleError(error as AxiosError, navigate);
-        }
-    }, [project, transcriptId, navigate, token]);
+        const { data } = await callApi<Transcript>({
+            method: "GET",
+            url: `/projects/${project.id}/transcripts/${transcriptId}`,
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        setTranscript(data);
+    }, [project, transcriptId, token, callApi]);
 
     const getTranscriptContent = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
@@ -40,24 +38,19 @@ export const TranscriptDetails = () => {
                 return;
             }
 
-            try {
-                const { data } = await api.get<PaginatedResults<TranscriptContentUtterance>>(
-                    `/projects/${project.id}/transcripts/${transcriptId}/content`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                        params: {
-                            page,
-                            pageSize,
-                        },
-                    }
-                );
+            const { data } = await callApi<PaginatedResults<TranscriptContentUtterance>>({
+                method: "GET",
+                url: `/projects/${project.id}/transcripts/${transcriptId}/content`,
+                headers: { Authorization: `Bearer ${token}` },
+                params: {
+                    page,
+                    pageSize,
+                },
+            });
 
-                setTranscriptContent(data);
-            } catch (error) {
-                handleError(error as AxiosError, navigate);
-            }
+            setTranscriptContent(data);
         },
-        [project, transcriptId, navigate, token]
+        [project, transcriptId, token, callApi]
     );
 
     useEffect(() => {
@@ -72,6 +65,10 @@ export const TranscriptDetails = () => {
         loadTranscript();
         loadTranscriptContent();
     }, [getTranscript, getTranscriptContent]);
+
+    if (!transcript) {
+        return <Spin />;
+    }
 
     return (
         <div>
@@ -89,7 +86,7 @@ export const TranscriptDetails = () => {
                     </tbody>
                 </table>
             )}
-            {transcriptContent && (
+            {transcriptContent && !loading && (
                 <div>
                     {transcriptContent.results?.map((line, i) => (
                         <p key={i}>

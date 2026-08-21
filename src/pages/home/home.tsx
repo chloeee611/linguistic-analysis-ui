@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { api, handleError } from "@/api/api";
-import { useNavigate } from "react-router";
-import { AxiosError } from "axios";
 import { Statistic } from "@/components/statistic";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
+import { useApi } from "@/hooks/api.hooks";
 import { Card } from "@/components/card";
+import { Spin } from "@/components/spin";
 
 import styles from "./home.module.scss";
 
@@ -17,23 +16,26 @@ type DashboardStats = {
 
 export const Home = () => {
     const [stats, setStats] = useState<DashboardStats | null>(null);
-    const navigate = useNavigate();
+
     const { token } = useUser();
+    const { loading, callApi } = useApi();
 
     useEffect(() => {
         const fetchStats = async () => {
-            try {
-                const { data } = await api.get("/users/dashboard", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+            const { data } = await callApi<DashboardStats>({
+                method: "GET",
+                url: "/users/dashboard",
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
-                setStats(data);
-            } catch (err) {
-                handleError(err as AxiosError, navigate);
-            }
+            setStats(data);
         };
         fetchStats();
-    }, [navigate, token]);
+    }, [token, callApi]);
+
+    if (loading) {
+        return <Spin />;
+    }
 
     return (
         <div className={styles.container}>

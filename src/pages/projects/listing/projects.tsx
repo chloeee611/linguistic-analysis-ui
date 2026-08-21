@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { api, handleError } from "@/api/api";
 import { useNavigate } from "react-router";
-import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { Project } from "@/model/project.types";
 import { NavLink } from "@/components/nav-link";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
+import { useApi } from "@/hooks/api.hooks";
 import { Card } from "@/components/card";
+import { Spin } from "@/components/spin";
 
 import styles from "./projects.module.scss";
 
@@ -17,22 +17,25 @@ export const Projects = () => {
 
     const navigate = useNavigate();
     const { token } = useUser();
+    const { loading, callApi } = useApi();
 
     useEffect(() => {
         const loadProject = async () => {
-            try {
-                const { data } = await api.get<Project[]>("/projects", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+            const { data } = await callApi<Project[]>({
+                method: "GET",
+                url: "/projects",
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
-                setProjects(data);
-            } catch (err) {
-                handleError(err as AxiosError, navigate);
-            }
+            setProjects(data);
         };
 
         loadProject();
-    }, [navigate, token]);
+    }, [token, callApi]);
+
+    if (loading) {
+        return <Spin />;
+    }
 
     return (
         <div className={styles.container}>

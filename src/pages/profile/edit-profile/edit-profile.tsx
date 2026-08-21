@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { api, handleError } from "@/api/api";
 import { useNavigate } from "react-router";
 import { InputProps } from "@/components/input/input";
-import { AxiosError } from "axios";
+import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
+import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
 import { User } from "@/model/user.types";
 import { Form } from "@/components/form";
+import { Spin } from "@/components/spin";
 
 import styles from "./edit-profile.module.scss";
-import { Heading } from "@/components/heading";
 
 type Field = {
     type: InputProps["type"];
@@ -40,22 +40,21 @@ export const EditProfile = () => {
     const [user, setUser] = useState<Partial<User>>();
     const navigate = useNavigate();
     const { token } = useUser();
+    const { loading, callApi } = useApi();
 
     useEffect(() => {
         const loadProfile = async () => {
-            try {
-                const { data } = await api.get<User>("/users/me", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+            const { data } = await callApi<User>({
+                method: "GET",
+                url: "/users/me",
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
-                setUser(data);
-            } catch (err) {
-                handleError(err as AxiosError, navigate);
-            }
+            setUser(data);
         };
 
         loadProfile();
-    }, [navigate, token]);
+    }, [token, callApi]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -74,26 +73,25 @@ export const EditProfile = () => {
             return;
         }
 
-        try {
-            await api.put(
-                "/users/me",
-                {
-                    email: user.email,
-                    dob: user.dob,
-                    bio: user.bio,
-                    research_field: user.research_field,
-                    location: user.location,
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+        await callApi({
+            method: "PUT",
+            url: "/users/me",
+            data: {
+                email: user.email,
+                dob: user.dob,
+                bio: user.bio,
+                research_field: user.research_field,
+                location: user.location,
+            },
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-            navigate("/profile");
-        } catch (error) {
-            handleError(error as AxiosError, navigate);
-        }
+        navigate("/profile");
     };
+
+    if (loading) {
+        return <Spin />;
+    }
 
     return (
         <Form className={styles.container} onSubmit={callEditProfile}>

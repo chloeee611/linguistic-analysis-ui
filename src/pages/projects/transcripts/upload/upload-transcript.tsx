@@ -1,4 +1,4 @@
-import { GetProp, Progress, Select, Spin, Steps, Upload, UploadFile, UploadProps } from "antd";
+import { GetProp, Progress, Select, Steps, Upload, UploadFile, UploadProps } from "antd";
 import { SubmitEvent, useEffect, useMemo, useState } from "react";
 import { TranscriptUploadTask } from "@/model/task.types";
 import { UploadOutlined } from "@ant-design/icons";
@@ -11,6 +11,7 @@ import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { Form } from "@/components/form";
+import { Spin } from "@/components/spin";
 import { api } from "@/api/api";
 
 import styles from "./upload-transcript.module.scss";

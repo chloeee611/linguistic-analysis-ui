@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { api, handleError } from "@/api/api";
-import { useNavigate } from "react-router";
-import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { NavLink } from "@/components/nav-link";
+import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
+import { useApi } from "@/hooks/api.hooks";
 import { Label } from "@/components/label";
 import { User } from "@/model/user.types";
+import { Spin } from "@/components/spin";
 
 import styles from "./view-profile.module.scss";
-import { Heading } from "@/components/heading";
 
 type Field = {
     label: string;
@@ -29,24 +28,26 @@ const fields: Field[] = [
 
 export const ViewProfile = () => {
     const [user, setUser] = useState<User>();
-    const navigate = useNavigate();
     const { token } = useUser();
+    const { loading, callApi } = useApi();
 
     useEffect(() => {
         const loadProfile = async () => {
-            try {
-                const { data } = await api.get<User>("/users/me", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+            const { data } = await callApi<User>({
+                method: "GET",
+                url: "/users/me",
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
-                setUser(data);
-            } catch (err) {
-                handleError(err as AxiosError, navigate);
-            }
+            setUser(data);
         };
 
         loadProfile();
-    }, [navigate, token]);
+    }, [token, callApi]);
+
+    if (loading) {
+        return <Spin />;
+    }
 
     return (
         <div className={styles.container}>

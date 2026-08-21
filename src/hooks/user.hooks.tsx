@@ -2,7 +2,6 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { api, handleError } from "@/api/api";
 import { User, UserJWT } from "@/model/user.types";
-import { useNavigate } from "react-router";
 import { AxiosError } from "axios";
 
 export type UserContextProps = {
@@ -21,8 +20,6 @@ export const UserContext = createContext<UserContextProps>({
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User>();
-
-    const navigate = useNavigate();
 
     const token = localStorage.getItem("token");
 
@@ -45,7 +42,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     setUser(data);
                 }
             } catch (error) {
-                handleError(error as AxiosError, navigate);
+                handleError(error as AxiosError, () => {});
             }
         };
 
@@ -55,7 +52,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setUser(undefined);
         }
-    }, [token, user, navigate]);
+    }, [token, user]);
 
     return <UserContext value={{ user, token, login, logout }}>{children}</UserContext>;
 };

@@ -6,11 +6,12 @@ import { Project } from "@/model/project.types";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
+import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
 import { Space } from "antd";
 import { Form } from "@/components/form";
-import { api } from "@/api/api";
+import { Spin } from "@/components/spin";
 
 import styles from "./create-project.module.scss";
 
@@ -20,31 +21,31 @@ export const CreateProject = () => {
 
     const navigate = useNavigate();
     const { token } = useUser();
+    const { loading, callApi } = useApi();
 
     const callCreateProject = async (event: SubmitEvent) => {
-        try {
-            event.preventDefault();
+        event.preventDefault();
 
-            const formObject = parseFormData<Project>(event);
+        const formObject = parseFormData<Project>(event);
 
-            const { data, status } = await api.post(
-                "/projects",
-                { ...formObject, children: currentChildren },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+        const { data, status } = await callApi<{ id: string }>({
+            method: "POST",
+            url: "/projects",
+            data: { ...formObject, children: currentChildren },
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-            if (status === 201) {
-                console.log("Project created successfully");
-                navigate(`/projects/${data.id}`);
-            }
-
-            // TODO: return newly created project id, then navigate to new project page
-        } catch (error) {
-            console.error(error);
+        if (status === 201) {
+            console.log("Project created successfully");
+            navigate(`/projects/${data.id}`);
         }
+
+        // TODO: return newly created project id, then navigate to new project page
     };
+
+    if (loading) {
+        return <Spin />;
+    }
 
     return (
         <div className={styles.container}>

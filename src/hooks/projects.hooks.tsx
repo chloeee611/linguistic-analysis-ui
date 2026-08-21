@@ -1,8 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
 import { api, handleError } from "@/api/api";
 import { AxiosError } from "axios";
+import { useParams } from "react-router";
 import { Project } from "@/model/project.types";
 import { useUser } from "./user.hooks";
 
@@ -18,7 +18,6 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
     const [project, setProject] = useState<Project>();
 
     const { token } = useUser();
-    const navigate = useNavigate();
 
     const getProject = useCallback(async () => {
         if (projectId === undefined) {
@@ -34,9 +33,9 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
                 return data;
             }
         } catch (error) {
-            handleError(error as AxiosError, navigate);
+            handleError(error as AxiosError, () => {});
         }
-    }, [projectId, navigate, token]);
+    }, [projectId, token]);
 
     useEffect(() => {
         const loadProject = async () => {

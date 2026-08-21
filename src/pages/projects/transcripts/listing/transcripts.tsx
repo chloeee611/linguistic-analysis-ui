@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { PaginatedResults } from "@/model/pagination.types";
-import { api, handleError } from "@/api/api";
-import { Select, Spin } from "antd";
 import { useNavigate } from "react-router";
 import { Transcript } from "@/model/transcript.types";
 import { Pagination } from "@/components/pagination";
 import { useProject } from "@/hooks/projects.hooks";
-import { AxiosError } from "axios";
 import { Paragraph } from "@/components/paragraph";
 import { Children } from "@/model/project.types";
 import { NavLink } from "@/components/nav-link";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
+import { useApi } from "@/hooks/api.hooks";
+import { Select } from "antd";
 import { Card } from "@/components/card";
+import { Spin } from "@/components/spin";
 
 import styles from "./transcripts.module.scss";
 
@@ -31,21 +31,20 @@ export const Transcripts = () => {
     const navigate = useNavigate();
     const { token } = useUser();
     const { project } = useProject();
+    const { loading, callApi } = useApi();
 
     const getProjectChildren = useCallback(async () => {
         if (!project) {
             return;
         }
 
-        try {
-            const { data } = await api.get<Children[]>(`/projects/${project.id}/children`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            return data;
-        } catch (error) {
-            handleError(error as AxiosError, navigate);
-        }
-    }, [project, navigate, token]);
+        const { data } = await callApi<Children[]>({
+            method: "GET",
+            url: `/projects/${project.id}/children`,
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return data;
+    }, [project, token, callApi]);
 
     useEffect(() => {
         const loadProject = async () => {
@@ -65,28 +64,22 @@ export const Transcripts = () => {
                 return [];
             }
 
-            try {
-                const { data } = await api.get<PaginatedResults<TranscriptWithChild>>(
-                    `/projects/${project.id}/transcripts`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                        params: {
-                            page,
-                            pageSize,
-                            children:
-                                filteredChildren.length > 0 ? encodeURIComponent(filteredChildren.join(",")) : null,
-                        },
-                    }
-                );
+            const { data } = await callApi<PaginatedResults<TranscriptWithChild>>({
+                method: "GET",
+                url: `/projects/${project.id}/transcripts`,
+                headers: { Authorization: `Bearer ${token}` },
+                params: {
+                    page,
+                    pageSize,
+                    children: filteredChildren.length > 0 ? encodeURIComponent(filteredChildren.join(",")) : null,
+                },
+            });
 
-                if (data) {
-                    setTranscripts(data);
-                }
-            } catch (error) {
-                handleError(error as AxiosError, navigate);
+            if (data) {
+                setTranscripts(data);
             }
         },
-        [project, token, navigate, filteredChildren]
+        [project, token, filteredChildren, callApi]
     );
 
     useEffect(() => {
@@ -97,7 +90,7 @@ export const Transcripts = () => {
         loadTranscripts();
     }, [getTranscripts, filteredChildren]);
 
-    if (!project) {
+    if (loading || !project) {
         return <Spin />;
     }
 

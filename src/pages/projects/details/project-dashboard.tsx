@@ -1,16 +1,14 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { useCallback, useEffect, useState } from "react";
-import { api, handleError } from "@/api/api";
 import { AnalysisType } from "@/model/analysis.types";
-import { useNavigate } from "react-router";
 import { useProject } from "@/hooks/projects.hooks";
-import { AxiosError } from "axios";
 import { ChartData } from "recharts/types/state/chartDataSlice";
 import { Heading } from "@/components/heading";
 import { NavLink } from "@/components/nav-link";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
-import { Spin } from "antd";
+import { useApi } from "@/hooks/api.hooks";
+import { Spin } from "@/components/spin";
 
 import styles from "./project-dashboard.module.scss";
 
@@ -22,24 +20,22 @@ type ProjectSummaryReturn = {
 export const ProjectDashboard = () => {
     const [projectSummary, setProjectSummary] = useState<ProjectSummaryReturn>();
 
-    const navigate = useNavigate();
     const { token } = useUser();
     const { project } = useProject();
+    const { loading, callApi } = useApi();
 
     const getProjectSummary = useCallback(async () => {
         if (!project) {
             return;
         }
 
-        try {
-            const { data } = await api.get<ProjectSummaryReturn>(`/projects/${project.id}/dashboard`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            return data;
-        } catch (error) {
-            handleError(error as AxiosError, navigate);
-        }
-    }, [project, navigate, token]);
+        const { data } = await callApi<ProjectSummaryReturn>({
+            method: "GET",
+            url: `/projects/${project.id}/dashboard`,
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return data;
+    }, [project, token, callApi]);
 
     useEffect(() => {
         const loadProject = async () => {
@@ -50,7 +46,7 @@ export const ProjectDashboard = () => {
         loadProject();
     }, [project, getProjectSummary]);
 
-    if (!project || !projectSummary) {
+    if (loading || !project || !projectSummary) {
         return <Spin />;
     }
 
