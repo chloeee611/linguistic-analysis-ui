@@ -1,27 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { InputProps } from "@/components/input/input";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
+import { Field } from "@/model/form.types";
 import { User } from "@/model/user.types";
 import { Form } from "@/components/form";
 import { Spin } from "@/components/spin";
 
 import styles from "./edit-profile.module.scss";
 
-type Field = {
-    type: InputProps["type"];
-    label: string;
-    property: keyof User;
-    disabled?: boolean;
-    required?: boolean;
-};
-
-const fields: Field[] = [
+const fields: Field<User>[] = [
     {
         label: "Name",
         property: "name",

@@ -8,6 +8,8 @@ import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
+import { Label } from "@/components/label";
+import { Field } from "@/model/form.types";
 import { Steps } from "antd";
 import { Card } from "@/components/card";
 import { Spin } from "@/components/spin";
@@ -29,21 +31,24 @@ const stepItems = [
     },
 ];
 
-// type KwalForm = {
-//     search_utterance: string;
-//     transcripts: Partial<Transcript>[];
-// };
+type KwalForm = {
+    search_utterance: string;
+    gra_filters: string;
+    mor_filters: string;
+};
 
 export const Kwal = () => {
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [searchUtterance, setSearchUtterance] = useState<string>("");
-    const [transcriptsLookup, setTranscriptsLookup] = useState<Record<string, Transcript>>();
+    const [graFilters, setGraFilters] = useState<string>("");
+    const [morFilters, setMorFilters] = useState<string>("");
+    const [transcriptsLookup, setTranscriptsLookup] = useState<Record<string, Transcript>>({});
     const [selectedTranscripts, setSelectedTranscripts] = useState<Record<string, Transcript>>({});
     const [paginatedTranscripts, setPaginatedTranscripts] = useState<PaginatedResults<Transcript>>();
 
     const { token } = useUser();
     const { project } = useProject();
-    const { loading, callApi } = useApi();
+    const { callApi } = useApi();
 
     const loadTranscripts = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
@@ -83,7 +88,7 @@ export const Kwal = () => {
     }, [loadTranscripts]);
 
     const onCardClick = (id: string) => {
-        if (!transcriptsLookup) {
+        if (Object.keys(transcriptsLookup).length === 0) {
             return;
         }
 
@@ -96,6 +101,22 @@ export const Kwal = () => {
         }
     };
 
+    const onSelectedAll = () => {
+        if (Object.keys(transcriptsLookup).length === 0) {
+            return;
+        }
+
+        setSelectedTranscripts(transcriptsLookup);
+    };
+
+    const onRemovedAll = () => {
+        if (Object.keys(transcriptsLookup).length === 0) {
+            return;
+        }
+
+        setSelectedTranscripts({});
+    };
+
     const onSubmit = async () => {
         if (!project) {
             return;
@@ -106,7 +127,8 @@ export const Kwal = () => {
             url: `/analysis/kwal`,
             data: {
                 search_utterance: [searchUtterance],
-                // project_id: project.id,
+                mor_filters: [morFilters],
+                gra_filters: [graFilters],
                 transcripts: Object.values(selectedTranscripts).map(({ id, file_url }) => ({ id, file_url })),
             },
 
@@ -115,6 +137,32 @@ export const Kwal = () => {
 
         // navigate("/");
     };
+
+    const fields = useMemo<Field<KwalForm>[]>(
+        () => [
+            {
+                label: "Search Word",
+                property: "search_utterance",
+                type: "text",
+                onChange: (e) => setSearchUtterance(e.target.value),
+            },
+            {
+                id: "gra",
+                label: "Gra Filter",
+                property: "gra_filters",
+                type: "text",
+                onChange: (e) => setGraFilters(e.target.value),
+            },
+            {
+                id: "mor",
+                label: "Mor Filter",
+                property: "mor_filters",
+                type: "text",
+                onChange: (e) => setMorFilters(e.target.value),
+            },
+        ],
+        []
+    );
 
     const nextDisabled = useMemo(() => {
         switch (currentStep) {
@@ -125,7 +173,7 @@ export const Kwal = () => {
         }
     }, [currentStep, selectedTranscripts]);
 
-    if (loading || !project || !transcriptsLookup || !paginatedTranscripts) {
+    if (!project || Object.keys(transcriptsLookup).length === 0 || !paginatedTranscripts) {
         return <Spin />;
     }
 
@@ -134,6 +182,15 @@ export const Kwal = () => {
             case 0:
                 return (
                     <>
+                        <div className={styles.selectButtons}>
+                            <Button type="secondary" onClick={onSelectedAll}>
+                                Select All {Object.keys(transcriptsLookup).length}
+                            </Button>
+                            <Button type="secondary" onClick={onRemovedAll}>
+                                Remove All {Object.keys(selectedTranscripts).length}
+                            </Button>
+                        </div>
+
                         <div className={styles.listingGrid}>
                             {Object.values(transcriptsLookup).map(({ id, title, file_url }) => (
                                 <Card
@@ -158,7 +215,16 @@ export const Kwal = () => {
                     </>
                 );
             case 1:
-                return <Input name="search_utterance" onChange={(e) => setSearchUtterance(e.target.value)} />;
+                return (
+                    <div>
+                        {fields.map(({ label, property, onChange }) => (
+                            <div className={styles.field}>
+                                <Label htmlFor={property}>{label}</Label>
+                                <Input id={property} name={property} onChange={onChange} />
+                            </div>
+                        ))}
+                    </div>
+                );
         }
     };
 

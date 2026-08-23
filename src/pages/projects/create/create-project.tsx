@@ -11,7 +11,6 @@ import { Input } from "@/components/input";
 import { Label } from "@/components/label";
 import { Space } from "antd";
 import { Form } from "@/components/form";
-import { Spin } from "@/components/spin";
 
 import styles from "./create-project.module.scss";
 
@@ -21,7 +20,7 @@ export const CreateProject = () => {
 
     const navigate = useNavigate();
     const { token } = useUser();
-    const { loading, callApi } = useApi();
+    const { callApi } = useApi();
 
     const callCreateProject = async (event: SubmitEvent) => {
         event.preventDefault();
@@ -42,10 +41,6 @@ export const CreateProject = () => {
 
         // TODO: return newly created project id, then navigate to new project page
     };
-
-    if (loading) {
-        return <Spin />;
-    }
 
     return (
         <div className={styles.container}>
