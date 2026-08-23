@@ -34,7 +34,7 @@ export const Login = () => {
             event.preventDefault();
             const formObject = parseFormData<User>(event);
             const { data } = await api.post<UserJWT>("/login", formObject);
-            login(data);
+            await login(data);
 
             navigate("/home");
         } catch (error) {

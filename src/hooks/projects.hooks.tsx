@@ -48,7 +48,7 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
         };
 
         loadProject();
-    }, [getProject, projectId]);
+    }, [getProject, projectId, token]);
 
     return <ProjectContext value={{ project }}>{children}</ProjectContext>;
 };

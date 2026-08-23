@@ -12,37 +12,38 @@ import styles from "./global-layout.module.scss";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
-const items: MenuItem[] = [
-    {
-        key: "/home",
-        icon: <HomeOutlined />,
-        label: <NavLink to="/home">Home</NavLink>,
-    },
-    {
-        key: "/projects",
-        icon: <FolderOpenOutlined />,
-        label: <NavLink to="/projects">Projects</NavLink>,
-    },
-    {
-        key: "/profile",
-        icon: <UserOutlined />,
-        label: <NavLink to="/profile">Profile</NavLink>,
-    },
-    {
-        key: "/logout",
-        icon: <LogoutOutlined />,
-        label: <NavLink to="/login">Logout</NavLink>,
-        onClick: () => {
-            localStorage.removeItem("token");
-        },
-    },
-];
-
 export const NavMenu = () => {
     const { pathname } = useLocation();
-    const { user } = useUser();
+    const { user, logout } = useUser();
 
     const current = useMemo(() => `/${pathname.split("/")[1]}`, [pathname]);
+
+    const items: MenuItem[] = useMemo(
+        () => [
+            {
+                key: "/home",
+                icon: <HomeOutlined />,
+                label: <NavLink to="/home">Home</NavLink>,
+            },
+            {
+                key: "/projects",
+                icon: <FolderOpenOutlined />,
+                label: <NavLink to="/projects">Projects</NavLink>,
+            },
+            {
+                key: "/profile",
+                icon: <UserOutlined />,
+                label: <NavLink to="/profile">Profile</NavLink>,
+            },
+            {
+                key: "/logout",
+                icon: <LogoutOutlined />,
+                label: <NavLink to="/login">Logout</NavLink>,
+                onClick: logout,
+            },
+        ],
+        [logout]
+    );
 
     return (
         <div className={styles.pageContainer}>

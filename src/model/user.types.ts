@@ -8,6 +8,7 @@ export type User = {
     bio: string;
     research_field: string;
     location: string;
+    token?: string;
 };
 
 export type UserJWT = {
