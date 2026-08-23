@@ -15,6 +15,7 @@ import { NavMenu } from "./layouts/global-layout/global-layout";
 import { Landing } from "./pages/landing";
 import { Login } from "./pages/login";
 import { Kwal } from "./pages/projects/analysis/kwal";
+import { Results } from "./pages/projects/analysis/results";
 import { Home } from "./pages/home";
 
 import "./App.css";
@@ -47,9 +48,7 @@ function Router() {
 
                         <Route path="analysis">
                             <Route path="kwal" element={<Kwal />} />
-                            <Route path="mlu" element={<Kwal />} />
-                            <Route path="freq" element={<Kwal />} />
-                            <Route path="lexrare" element={<Kwal />} />
+                            <Route path="results" element={<Results />} />
                         </Route>
 
                         <Route path="transcripts">

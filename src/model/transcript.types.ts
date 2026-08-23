@@ -3,7 +3,7 @@ export type Transcript = {
     project_id: string;
     title: string;
     file_url: string;
-    metadata: Record<string, unknown>;
+    metadata: TranscriptMetadata;
     child_id: string;
 };
 

@@ -17,6 +17,20 @@ type ProjectSummaryReturn = {
     colourKeys: Record<string, string>;
 };
 
+const formatAgeLabel = (value: string) => {
+    const [year, rest] = value.split(";");
+    const [month, day] = rest.split(".");
+
+    const yearNumber = Number(year);
+    const monthNumber = Number(month);
+    const dayNumber = Number(day);
+
+    // Average
+    const totalDays = dayNumber + monthNumber * 30;
+
+    return `${(yearNumber + totalDays / 365).toFixed(2)}`;
+};
+
 export const ProjectDashboard = () => {
     const [projectSummary, setProjectSummary] = useState<ProjectSummaryReturn>();
 
@@ -79,7 +93,7 @@ export const ProjectDashboard = () => {
                                 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="age" stroke="#52525b" />
+                                <XAxis dataKey="age" stroke="#52525b" tickFormatter={formatAgeLabel} minTickGap={20} />
                                 <YAxis width="auto" stroke="#52525b" />
                                 <Tooltip
                                     cursor={{

@@ -114,13 +114,14 @@ export const Transcripts = () => {
                         options={currentChildren}
                     />
                     <div className={styles.listingGrid}>
-                        {transcripts.results.map(({ id, title, file_url }) => (
+                        {transcripts.results.map(({ id, title, child_name, metadata }) => (
                             <Card
                                 key={id}
                                 title={title}
                                 onClick={() => navigate(`/projects/${project.id}/transcripts/${id}`)}
                             >
-                                <Paragraph>{file_url}</Paragraph>
+                                <Paragraph>Child: {child_name}</Paragraph>
+                                <Paragraph>Date: {new Date(metadata.date).toLocaleDateString()}</Paragraph>
                             </Card>
                         ))}
                     </div>

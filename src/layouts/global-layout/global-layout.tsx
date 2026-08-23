@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import { Button } from "@/components/button";
 
 import styles from "./global-layout.module.scss";
+import clsx from "clsx";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -83,7 +84,7 @@ export const NavMenu = () => {
                     )}
                 </div>
 
-                <div className={styles.content}>
+                <div className={clsx({ [styles.content]: pathname !== "/" })}>
                     <Outlet />
                 </div>
             </div>
