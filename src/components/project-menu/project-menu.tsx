@@ -50,8 +50,8 @@ export const ProjectMenu = () => {
                         label: <NavLink to={`${projectUrlString}/analysis/kwal`}>Search</NavLink>,
                     },
                     {
-                        key: "/analysis/results",
-                        label: <NavLink to={`${projectUrlString}/analysis/results`}>Results</NavLink>,
+                        key: "/analysis/",
+                        label: <NavLink to={`${projectUrlString}/analysis`}>Results</NavLink>,
                     },
                 ],
             },

@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PaginatedResults } from "@/model/pagination.types";
+import { useNavigate } from "react-router";
 import { Transcript } from "@/model/transcript.types";
 import { Pagination } from "@/components/pagination";
 import { useProject } from "@/hooks/projects.hooks";
 import { Paragraph } from "@/components/paragraph";
+import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { useApi } from "@/hooks/api.hooks";
@@ -39,9 +41,11 @@ type KwalForm = {
 
 export const Kwal = () => {
     const [currentStep, setCurrentStep] = useState<number>(0);
-    const [searchUtterance, setSearchUtterance] = useState<string>("");
-    const [graFilters, setGraFilters] = useState<string>("");
-    const [morFilters, setMorFilters] = useState<string>("");
+    const [searches, setSearches] = useState<Record<keyof KwalForm, string | undefined>>({
+        search_utterance: undefined,
+        gra_filters: undefined,
+        mor_filters: undefined,
+    });
     const [transcriptsLookup, setTranscriptsLookup] = useState<Record<string, Transcript>>({});
     const [selectedTranscripts, setSelectedTranscripts] = useState<Record<string, Transcript>>({});
     const [paginatedTranscripts, setPaginatedTranscripts] = useState<PaginatedResults<Transcript>>();
@@ -49,6 +53,7 @@ export const Kwal = () => {
     const { token } = useUser();
     const { project } = useProject();
     const { callApi } = useApi();
+    const navigate = useNavigate();
 
     const loadTranscripts = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
@@ -122,20 +127,21 @@ export const Kwal = () => {
             return;
         }
 
-        await callApi({
+        const { data } = await callApi<{ id: string }>({
             method: "POST",
             url: `/analysis/kwal`,
             data: {
-                search_utterance: [searchUtterance],
-                mor_filters: [morFilters],
-                gra_filters: [graFilters],
+                project_id: project.id,
+                search_utterance: [searches.search_utterance],
+                mor_filters: [searches.mor_filters],
+                gra_filters: [searches.gra_filters],
                 transcripts: Object.values(selectedTranscripts).map(({ id, file_url }) => ({ id, file_url })),
             },
 
             headers: { Authorization: `Bearer ${token}` },
         });
 
-        // navigate("/");
+        navigate(`/projects/${project.id}/analysis/${data.id}`);
     };
 
     const fields = useMemo<Field<KwalForm>[]>(
@@ -144,21 +150,24 @@ export const Kwal = () => {
                 label: "Search Word",
                 property: "search_utterance",
                 type: "text",
-                onChange: (e) => setSearchUtterance(e.target.value),
+                onChange: (e) =>
+                    setSearches((previousSearches) => ({ ...previousSearches, search_utterance: e.target.value })),
             },
             {
                 id: "gra",
                 label: "Gra Filter",
                 property: "gra_filters",
                 type: "text",
-                onChange: (e) => setGraFilters(e.target.value),
+                onChange: (e) =>
+                    setSearches((previousSearches) => ({ ...previousSearches, gra_filters: e.target.value })),
             },
             {
                 id: "mor",
                 label: "Mor Filter",
                 property: "mor_filters",
                 type: "text",
-                onChange: (e) => setMorFilters(e.target.value),
+                onChange: (e) =>
+                    setSearches((previousSearches) => ({ ...previousSearches, mor_filters: e.target.value })),
             },
         ],
         []
@@ -220,9 +229,19 @@ export const Kwal = () => {
                         {fields.map(({ label, property, onChange }) => (
                             <div className={styles.field}>
                                 <Label htmlFor={property}>{label}</Label>
-                                <Input id={property} name={property} onChange={onChange} />
+                                <Input value={searches[property]} id={property} name={property} onChange={onChange} />
                             </div>
                         ))}
+                    </div>
+                );
+            case 2:
+                return (
+                    <div>
+                        <Heading level={2}>Search Settings</Heading>
+                        <Paragraph>{Object.keys(selectedTranscripts).length} Transcripts</Paragraph>
+                        <Paragraph>Utterance Search: {searches.search_utterance}</Paragraph>
+                        <Paragraph>MOR Tier Search: {searches.mor_filters ?? "None"}</Paragraph>
+                        <Paragraph>GRA Tier Search: {searches.gra_filters ?? "None"}</Paragraph>
                     </div>
                 );
         }

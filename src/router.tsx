@@ -3,6 +3,7 @@ import { UploadTranscript } from "./pages/projects/transcripts/upload";
 import { ProjectDashboard } from "./pages/projects/details";
 import { ProjectSettings } from "./pages/projects/settings";
 import { ProjectProvider } from "./hooks/projects.hooks";
+import { ResultDetails } from "./pages/projects/analysis/results/details";
 import { CreateProject } from "./pages/projects/create";
 import { Route, Routes } from "react-router";
 import { UserProvider } from "./hooks/user.hooks";
@@ -11,11 +12,11 @@ import { EditProfile } from "./pages/profile/edit-profile";
 import { ViewProfile } from "./pages/profile/view-profile";
 import { Projects } from "./pages/projects/listing";
 import { Register } from "./pages/register";
+import { Results } from "./pages/projects/analysis/results/summary";
 import { NavMenu } from "./layouts/global-layout/global-layout";
 import { Landing } from "./pages/landing";
 import { Login } from "./pages/login";
 import { Kwal } from "./pages/projects/analysis/kwal";
-import { Results } from "./pages/projects/analysis/results";
 import { Home } from "./pages/home";
 
 import "./App.css";
@@ -48,7 +49,8 @@ function Router() {
 
                         <Route path="analysis">
                             <Route path="kwal" element={<Kwal />} />
-                            <Route path="results" element={<Results />} />
+                            <Route index element={<Results />} />
+                            <Route path=":analysisId" element={<ResultDetails />} />
                         </Route>
 
                         <Route path="transcripts">

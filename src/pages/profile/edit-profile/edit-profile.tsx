@@ -1,17 +1,15 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
 import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
-import { Label } from "@/components/label";
 import { Field } from "@/model/form.types";
 import { User } from "@/model/user.types";
-import { Spin } from "@/components/spin";
+import { Form } from "antd";
 
 import styles from "./edit-profile.module.scss";
-import { Form } from "antd";
+import { Spin } from "@/components/spin";
 
 const fields: Field<User>[] = [
     {
@@ -21,46 +19,46 @@ const fields: Field<User>[] = [
         disabled: true,
     },
     { label: "Username", property: "username", type: "text", disabled: true },
-    { label: "Email", property: "email", type: "email" },
-    { label: "Date of birth", property: "dob", type: "date" },
+    { label: "Email", property: "email", type: "email", required: true },
+    { label: "Date of birth", property: "dob", type: "date", required: true },
     { label: "Bio", property: "bio", type: "text" },
     { label: "Research Field", property: "research_field", type: "text" },
     { label: "Location", property: "location", type: "text" },
 ];
 
 export const EditProfile = () => {
-    const [user, setUser] = useState<Partial<User>>();
+    // const [user, setUser] = useState<Partial<User>>();
     const navigate = useNavigate();
     const { token } = useUser();
-    const { loading, callApi } = useApi();
+    const { callApi } = useApi();
 
-    useEffect(() => {
-        const loadProfile = async () => {
-            const { data } = await callApi<User>({
-                method: "GET",
-                url: "/users/me",
-                headers: { Authorization: `Bearer ${token}` },
-            });
+    const { user } = useUser();
 
-            setUser(data);
-        };
+    // useEffect(() => {
+    //     const loadProfile = async () => {
+    //         const { data } = await callApi<User>({
+    //             method: "GET",
+    //             url: "/users/me",
+    //             headers: { Authorization: `Bearer ${token}` },
+    //         });
 
-        loadProfile();
-    }, [token, callApi]);
+    //         setUser(data);
+    //     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
+    //     loadProfile();
+    // }, [token, callApi]);
 
-        setUser((user) => ({
-            ...user,
-            [name]: value,
-        }));
-    };
+    // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { name, value } = event.target;
 
-    const callEditProfile = async (event: React.SyntheticEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    //     setUser((user) => ({
+    //         ...user,
+    //         [name]: value,
+    //     }));
+    // };
 
-        if (!user) {
+    const callEditProfile = async (updatedUser: User) => {
+        if (!updatedUser) {
             console.error("Error with this profile");
             return;
         }
@@ -69,11 +67,11 @@ export const EditProfile = () => {
             method: "PUT",
             url: "/users/me",
             data: {
-                email: user.email,
-                dob: user.dob,
-                bio: user.bio,
-                research_field: user.research_field,
-                location: user.location,
+                email: updatedUser.email,
+                dob: updatedUser.dob,
+                bio: updatedUser.bio,
+                research_field: updatedUser.research_field,
+                location: updatedUser.location,
             },
             headers: { Authorization: `Bearer ${token}` },
         });
@@ -81,30 +79,26 @@ export const EditProfile = () => {
         navigate("/profile");
     };
 
-    if (loading) {
+    if (!user) {
         return <Spin />;
     }
 
     return (
-        <Form className={styles.container} onFinish={callEditProfile}>
+        <Form className={styles.container} onFinish={callEditProfile} layout="vertical">
             <div className={styles.header}>
                 <Heading level={1}>Profile</Heading>
                 <Button htmlType="submit">Save</Button>
             </div>
             <div className={styles.fieldContainer}>
                 {fields.map(({ label, property, type, disabled, required }) => (
-                    <div className={styles.field}>
-                        <Label>{label}</Label>
-                        <Input
-                            name={property}
-                            className={styles.property}
-                            type={type}
-                            disabled={disabled}
-                            onChange={handleChange}
-                            value={user?.[property]}
-                            required={required}
-                        />
-                    </div>
+                    <Form.Item
+                        initialValue={user?.[property]}
+                        name={property}
+                        label={label}
+                        rules={[{ required, message: `${property} is required` }]}
+                    >
+                        <Input className={styles.property} type={type} disabled={disabled} />
+                    </Form.Item>
                 ))}
             </div>
         </Form>

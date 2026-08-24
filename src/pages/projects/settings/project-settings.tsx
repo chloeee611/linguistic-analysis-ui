@@ -96,8 +96,9 @@ export const ProjectSettings = () => {
                         name={property}
                         label={label}
                         rules={[{ required: true, message: `${property} is required` }]}
+                        initialValue={project[property]}
                     >
-                        <Input defaultValue={project[property]} />
+                        <Input />
                     </Form.Item>
                 ))}
                 <Label>Children</Label>
