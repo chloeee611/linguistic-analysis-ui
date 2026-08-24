@@ -4,7 +4,6 @@ import { UserJWT } from "../../model/user.types";
 import { Heading } from "@/components/heading";
 import { Button } from "../../components/button";
 import { Input } from "../../components/input";
-import { Label } from "../../components/label";
 import { api } from "../../api/api";
 
 import styles from "./register.module.scss";
@@ -51,12 +50,11 @@ export const Register = () => {
     return (
         <div className={styles.container}>
             <Heading level={1}>Register</Heading>
-            <Form onFinish={callRegister}>
+            <Form onFinish={callRegister} layout="vertical">
                 {inputs.map(({ id, label, type }) => (
-                    <>
-                        <Label htmlFor={id}>{label}</Label>
-                        <Input id={id} name={id} type={type} />
-                    </>
+                    <Form.Item name={id} label={label} rules={[{ required: true, message: `${id} is required` }]}>
+                        <Input type={type} />
+                    </Form.Item>
                 ))}
                 <div className={styles.buttons}>
                     <Button htmlType="submit" type="primary">

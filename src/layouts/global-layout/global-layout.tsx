@@ -84,7 +84,7 @@ export const NavMenu = () => {
                     )}
                 </div>
 
-                <div className={clsx({ [styles.content]: pathname !== "/" })}>
+                <div className={clsx(styles.content, { [styles.contentPadding]: pathname !== "/" })}>
                     <Outlet />
                 </div>
             </div>

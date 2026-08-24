@@ -1,7 +1,7 @@
-import { SubmitEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Children, Project } from "@/model/project.types";
-import { parseFormData } from "@/helpers/form.helpers";
 import { useNavigate } from "react-router";
+import { Form, Space } from "antd";
 import { useProject } from "@/hooks/projects.hooks";
 import { Paragraph } from "@/components/paragraph";
 import { Heading } from "@/components/heading";
@@ -10,10 +10,23 @@ import { Button } from "@/components/button";
 import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
-import { Form, Space } from "antd";
+import { Field } from "@/model/form.types";
 import { Spin } from "@/components/spin";
 
 import styles from "./project-settings.module.scss";
+
+const inputs: Field<Project>[] = [
+    {
+        property: "title",
+        label: "Title",
+        type: "text",
+    },
+    {
+        property: "description",
+        label: "Description",
+        type: "text",
+    },
+];
 
 export const ProjectSettings = () => {
     const [currentNewChild, setCurrentNewChild] = useState<string>("");
@@ -50,12 +63,8 @@ export const ProjectSettings = () => {
         loadProject();
     }, [project, getProjectChildren]);
 
-    const callEditProject = async (event: SubmitEvent) => {
+    const callEditProject = async (formObject: object) => {
         try {
-            event.preventDefault();
-
-            const formObject = parseFormData<Project>(event);
-
             const { data, status } = await callApi<{ id: string }>({
                 method: "PUT",
                 url: `/projects/${project?.id}`,
@@ -81,12 +90,16 @@ export const ProjectSettings = () => {
     return (
         <div className={styles.container}>
             <Heading level={1}>Project Settings</Heading>
-
-            <Form onFinish={callEditProject}>
-                <Label>Title</Label>
-                <Input defaultValue={project.title} name="title" />
-                <Label>Description</Label>
-                <Input defaultValue={project.description} name="description" />
+            <Form onFinish={callEditProject} layout="vertical">
+                {inputs.map(({ property, label }) => (
+                    <Form.Item
+                        name={property}
+                        label={label}
+                        rules={[{ required: true, message: `${property} is required` }]}
+                    >
+                        <Input defaultValue={project[property]} />
+                    </Form.Item>
+                ))}
                 <Label>Children</Label>
                 <Space.Compact style={{ width: "100%" }}>
                     <Input value={currentNewChild} onChange={(event) => setCurrentNewChild(event.target.value)} />

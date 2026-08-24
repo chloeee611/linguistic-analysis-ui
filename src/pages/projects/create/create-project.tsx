@@ -1,9 +1,7 @@
-import { SubmitEvent, useState } from "react";
-import { parseFormData } from "@/helpers/form.helpers";
 import { useNavigate } from "react-router";
 import { Form, Space } from "antd";
 import { Paragraph } from "@/components/paragraph";
-import { Project } from "@/model/project.types";
+import { useState } from "react";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
@@ -13,6 +11,17 @@ import { Label } from "@/components/label";
 
 import styles from "./create-project.module.scss";
 
+const inputs = [
+    {
+        id: "title",
+        label: "Title",
+    },
+    {
+        id: "description",
+        label: "Description",
+    },
+];
+
 export const CreateProject = () => {
     const [currentChild, setCurrentChild] = useState<string>("");
     const [currentChildren, setCurrentChildren] = useState<string[]>([]);
@@ -21,11 +30,7 @@ export const CreateProject = () => {
     const { token } = useUser();
     const { callApi } = useApi();
 
-    const callCreateProject = async (event: SubmitEvent) => {
-        event.preventDefault();
-
-        const formObject = parseFormData<Project>(event);
-
+    const callCreateProject = async (formObject: object) => {
         const { data, status } = await callApi<{ id: string }>({
             method: "POST",
             url: "/projects",
@@ -37,21 +42,18 @@ export const CreateProject = () => {
             console.log("Project created successfully");
             navigate(`/projects/${data.id}`);
         }
-
-        // TODO: return newly created project id, then navigate to new project page
     };
 
     return (
         <div className={styles.container}>
             <Heading level={1}>Create Project</Heading>
 
-            <Form onFinish={callCreateProject}>
-                <Label>Title</Label>
-                <Form.Item name="title">
-                    <Input name="title" />
-                </Form.Item>
-                <Label>Description</Label>
-                <Input name="description" />
+            <Form onFinish={callCreateProject} layout="vertical">
+                {inputs.map(({ id, label }) => (
+                    <Form.Item name={id} label={label} rules={[{ required: true, message: `${id} is required` }]}>
+                        <Input />
+                    </Form.Item>
+                ))}
                 <Label>Children</Label>
                 <Space.Compact style={{ width: "100%" }}>
                     <Input value={currentChild} onChange={(event) => setCurrentChild(event.target.value)} />

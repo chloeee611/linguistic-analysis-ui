@@ -231,7 +231,9 @@ export const UploadTranscript = () => {
                         </>
                     )}
                 </Upload.Dragger>
-                <Input name="project_id" value={project.id} hidden />
+                <Form.Item name="project_id" hidden>
+                    <Input value={project.id} />
+                </Form.Item>
 
                 <Select
                     placeholder="Select a child"
