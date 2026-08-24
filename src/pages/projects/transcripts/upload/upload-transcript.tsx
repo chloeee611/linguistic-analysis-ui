@@ -1,4 +1,4 @@
-import { GetProp, Progress, Select, Steps, Upload, UploadFile, UploadProps } from "antd";
+import { Form, GetProp, Progress, Select, Steps, Upload, UploadFile, UploadProps } from "antd";
 import { SubmitEvent, useEffect, useMemo, useState } from "react";
 import { TranscriptUploadTask } from "@/model/task.types";
 import { UploadOutlined } from "@ant-design/icons";
@@ -10,7 +10,7 @@ import { Children } from "@/model/project.types";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
-import { Form } from "@/components/form";
+import { Input } from "@/components/input";
 import { Spin } from "@/components/spin";
 import { api } from "@/api/api";
 
@@ -180,7 +180,7 @@ export const UploadTranscript = () => {
         <div className={styles.container}>
             <Heading level={1}>Upload Project Transcript</Heading>
 
-            <Form className={styles.form} onSubmit={callUploadTranscript}>
+            <Form className={styles.form} onFinish={callUploadTranscript}>
                 <Steps
                     className={styles.steps}
                     items={[
@@ -231,7 +231,7 @@ export const UploadTranscript = () => {
                         </>
                     )}
                 </Upload.Dragger>
-                <input name="project_id" value={project.id} hidden />
+                <Input name="project_id" value={project.id} hidden />
 
                 <Select
                     placeholder="Select a child"

@@ -5,10 +5,10 @@ import { Heading } from "@/components/heading";
 import { Button } from "../../components/button";
 import { Input } from "../../components/input";
 import { Label } from "../../components/label";
-import { Form } from "../../components/form";
 import { api } from "../../api/api";
 
 import styles from "./register.module.scss";
+import { Form } from "antd";
 
 const inputs = [
     {
@@ -51,7 +51,7 @@ export const Register = () => {
     return (
         <div className={styles.container}>
             <Heading level={1}>Register</Heading>
-            <Form onSubmit={callRegister}>
+            <Form onFinish={callRegister}>
                 {inputs.map(({ id, label, type }) => (
                     <>
                         <Label htmlFor={id}>{label}</Label>

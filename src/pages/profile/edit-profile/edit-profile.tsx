@@ -8,10 +8,10 @@ import { Input } from "@/components/input";
 import { Label } from "@/components/label";
 import { Field } from "@/model/form.types";
 import { User } from "@/model/user.types";
-import { Form } from "@/components/form";
 import { Spin } from "@/components/spin";
 
 import styles from "./edit-profile.module.scss";
+import { Form } from "antd";
 
 const fields: Field<User>[] = [
     {
@@ -86,7 +86,7 @@ export const EditProfile = () => {
     }
 
     return (
-        <Form className={styles.container} onSubmit={callEditProfile}>
+        <Form className={styles.container} onFinish={callEditProfile}>
             <div className={styles.header}>
                 <Heading level={1}>Profile</Heading>
                 <Button htmlType="submit">Save</Button>

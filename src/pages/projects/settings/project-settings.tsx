@@ -10,8 +10,7 @@ import { Button } from "@/components/button";
 import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
-import { Space } from "antd";
-import { Form } from "@/components/form";
+import { Form, Space } from "antd";
 import { Spin } from "@/components/spin";
 
 import styles from "./project-settings.module.scss";
@@ -83,7 +82,7 @@ export const ProjectSettings = () => {
         <div className={styles.container}>
             <Heading level={1}>Project Settings</Heading>
 
-            <Form onSubmit={callEditProject}>
+            <Form onFinish={callEditProject}>
                 <Label>Title</Label>
                 <Input defaultValue={project.title} name="title" />
                 <Label>Description</Label>

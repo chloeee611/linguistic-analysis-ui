@@ -1,15 +1,15 @@
-import { parseFormData } from "../../helpers/form.helpers";
-import { User, UserJWT } from "../../model/user.types";
+import { parseFormData } from "@/helpers/form.helpers";
+import { User, UserJWT } from "@/model/user.types";
 import { useNavigate } from "react-router";
 import { SubmitEvent } from "react";
 import { NavLink } from "@/components/nav-link";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
-import { Button } from "../../components/button";
-import { Input } from "../../components/input";
-import { Label } from "../../components/label";
-import { Form } from "../../components/form";
-import { api } from "../../api/api";
+import { Button } from "@/components/button";
+import { Input } from "@/components/input";
+import { Label } from "@/components/label";
+import { Form } from "antd";
+import { api } from "@/api/api";
 
 import styles from "./login.module.scss";
 
@@ -45,7 +45,7 @@ export const Login = () => {
     return (
         <div className={styles.container}>
             <Heading level={1}>Login</Heading>
-            <Form onSubmit={callLogin}>
+            <Form onFinish={callLogin}>
                 {inputs.map(({ id, label, type }) => (
                     <>
                         <Label htmlFor={id}>{label}</Label>

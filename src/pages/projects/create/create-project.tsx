@@ -1,6 +1,7 @@
 import { SubmitEvent, useState } from "react";
 import { parseFormData } from "@/helpers/form.helpers";
 import { useNavigate } from "react-router";
+import { Form, Space } from "antd";
 import { Paragraph } from "@/components/paragraph";
 import { Project } from "@/model/project.types";
 import { Heading } from "@/components/heading";
@@ -9,8 +10,6 @@ import { Button } from "@/components/button";
 import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
-import { Space } from "antd";
-import { Form } from "@/components/form";
 
 import styles from "./create-project.module.scss";
 
@@ -46,9 +45,11 @@ export const CreateProject = () => {
         <div className={styles.container}>
             <Heading level={1}>Create Project</Heading>
 
-            <Form onSubmit={callCreateProject}>
+            <Form onFinish={callCreateProject}>
                 <Label>Title</Label>
-                <Input name="title" />
+                <Form.Item name="title">
+                    <Input name="title" />
+                </Form.Item>
                 <Label>Description</Label>
                 <Input name="description" />
                 <Label>Children</Label>
