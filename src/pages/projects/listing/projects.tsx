@@ -12,6 +12,7 @@ import { Spin } from "@/components/spin";
 
 import styles from "./projects.module.scss";
 
+// Displays the list of projects for the user
 export const Projects = () => {
     const [projects, setProjects] = useState<Project[]>([]);
 
@@ -19,6 +20,7 @@ export const Projects = () => {
     const { token } = useUser();
     const { loading, callApi } = useApi();
 
+    // GET request to fetch all projects for the user
     useEffect(() => {
         const loadProject = async () => {
             const { data } = await callApi<Project[]>({
@@ -45,8 +47,6 @@ export const Projects = () => {
                     <NavLink to="/projects/create">Create Project</NavLink>
                 </Button>
             </div>
-
-            {/* TODO: create separate component for this */}
             <div className={styles.listingGrid}>
                 {projects.map(({ id, title, description }) => (
                     <Card key={id} title={title} onClick={() => navigate(`/projects/${id}`)}>

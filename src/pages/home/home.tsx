@@ -11,6 +11,7 @@ import { Spin } from "@/components/spin";
 
 import styles from "./home.module.scss";
 
+// Defines the structure of the dashboard stats
 type DashboardStats = {
     projectCount: number;
     transcriptCount: number;
@@ -18,6 +19,7 @@ type DashboardStats = {
     weeklyAnalysisCount: number;
 };
 
+// Displays the home page with an overview of the user's current projects and stats
 export const Home = () => {
     const [stats, setStats] = useState<DashboardStats | null>(null);
 

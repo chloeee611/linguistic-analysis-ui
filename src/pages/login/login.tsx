@@ -10,6 +10,7 @@ import { api } from "@/api/api";
 
 import styles from "./login.module.scss";
 
+// Defines the input fields for the login form
 const inputs = [
     {
         id: "username",
@@ -22,10 +23,12 @@ const inputs = [
     },
 ];
 
+// Renders the login form and handles the login process
 export const Login = () => {
     const navigate = useNavigate();
     const { login } = useUser();
 
+    // Handles login by sending POST request to Express API and navigates to home page if successful
     const callLogin = async (formObject: User) => {
         try {
             const { data } = await api.post<UserJWT>("/login", formObject);

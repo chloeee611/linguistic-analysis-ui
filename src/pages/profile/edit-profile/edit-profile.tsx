@@ -6,11 +6,12 @@ import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
 import { Field } from "@/model/form.types";
 import { User } from "@/model/user.types";
+import { Spin } from "@/components/spin";
 import { Form } from "antd";
 
 import styles from "./edit-profile.module.scss";
-import { Spin } from "@/components/spin";
 
+// Defines the fields for the edit profile form
 const fields: Field<User>[] = [
     {
         label: "Name",
@@ -26,36 +27,13 @@ const fields: Field<User>[] = [
     { label: "Location", property: "location", type: "text" },
 ];
 
+// Renders the edit profile form and handles the profile update process
 export const EditProfile = () => {
-    // const [user, setUser] = useState<Partial<User>>();
     const navigate = useNavigate();
     const { token } = useUser();
     const { callApi } = useApi();
 
     const { user } = useUser();
-
-    // useEffect(() => {
-    //     const loadProfile = async () => {
-    //         const { data } = await callApi<User>({
-    //             method: "GET",
-    //             url: "/users/me",
-    //             headers: { Authorization: `Bearer ${token}` },
-    //         });
-
-    //         setUser(data);
-    //     };
-
-    //     loadProfile();
-    // }, [token, callApi]);
-
-    // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     const { name, value } = event.target;
-
-    //     setUser((user) => ({
-    //         ...user,
-    //         [name]: value,
-    //     }));
-    // };
 
     const callEditProfile = async (updatedUser: User) => {
         if (!updatedUser) {

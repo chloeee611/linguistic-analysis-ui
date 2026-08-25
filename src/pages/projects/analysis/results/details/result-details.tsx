@@ -9,6 +9,7 @@ import { Spin } from "@/components/spin";
 
 import styles from "./result-details.module.scss";
 
+// Displays the details of a specific analysis result
 export const ResultDetails = () => {
     const { projectId, analysisId } = useParams();
 
@@ -31,6 +32,7 @@ export const ResultDetails = () => {
         fetchResults();
     }, [projectId, analysisId, token, callApi]);
 
+    // Renders the results table based on the analysis type and displays relevant data for each type
     const resultComponent = useMemo(() => {
         if (!analysis) {
             return;
@@ -133,6 +135,7 @@ export const ResultDetails = () => {
         return <Spin />;
     }
 
+    // Defines the summary data for the general details table
     const data = [
         {
             setting: "Analysis Type",

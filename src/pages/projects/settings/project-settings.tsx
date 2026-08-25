@@ -15,6 +15,7 @@ import { Spin } from "@/components/spin";
 
 import styles from "./project-settings.module.scss";
 
+// Defines input fields for project settings form
 const inputs: Field<Project>[] = [
     {
         property: "title",
@@ -28,6 +29,7 @@ const inputs: Field<Project>[] = [
     },
 ];
 
+// Displays project settings forms and allows user to edit project title, description, and children
 export const ProjectSettings = () => {
     const [currentNewChild, setCurrentNewChild] = useState<string>("");
     const [currentChildren, setCurrentChildren] = useState<Children[]>([]);
@@ -63,6 +65,7 @@ export const ProjectSettings = () => {
         loadProject();
     }, [project, getProjectChildren]);
 
+    // Handles PUT request to update project settings
     const callEditProject = async (formObject: object) => {
         try {
             const { data, status } = await callApi<{ id: string }>({
@@ -73,11 +76,9 @@ export const ProjectSettings = () => {
             });
 
             if (status === 201) {
-                console.log("Project created successfully");
+                console.log("Project edited successfully");
                 navigate(`/projects/${data.id}`);
             }
-
-            // TODO: return newly created project id, then navigate to new project page
         } catch (error) {
             console.error(error);
         }

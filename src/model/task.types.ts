@@ -1,3 +1,5 @@
+// Defines the types related to tasks and their associated data
+
 export type Task = {
     id: string;
     type: "task_upload";

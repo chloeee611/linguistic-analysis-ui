@@ -10,6 +10,7 @@ import { api } from "../../api/api";
 
 import styles from "./register.module.scss";
 
+// Defines the input fields for the register form which includes the validation rules
 const inputs: Field<User>[] = [
     {
         property: "name",
@@ -41,9 +42,11 @@ const inputs: Field<User>[] = [
     },
 ];
 
+// This component renders the registration form and handles the registration process
 export const Register = () => {
     const navigate = useNavigate();
 
+    // Handles registration by sending POST request to Express API and navigates to login page if successful
     const callRegister = async (event: SubmitEvent) => {
         try {
             event.preventDefault();

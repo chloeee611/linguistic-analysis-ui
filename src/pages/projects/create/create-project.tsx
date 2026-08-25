@@ -11,6 +11,7 @@ import { Label } from "@/components/label";
 
 import styles from "./create-project.module.scss";
 
+// Defines input fields for create project form
 const inputs = [
     {
         id: "title",
@@ -22,6 +23,7 @@ const inputs = [
     },
 ];
 
+// Displays the create project form
 export const CreateProject = () => {
     const [currentChild, setCurrentChild] = useState<string>("");
     const [currentChildren, setCurrentChildren] = useState<string[]>([]);

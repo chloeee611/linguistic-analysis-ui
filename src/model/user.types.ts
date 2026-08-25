@@ -1,3 +1,5 @@
+// Defines the types related to users and their associated data
+
 export type User = {
     id: number;
     name: string;

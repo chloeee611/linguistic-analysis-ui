@@ -23,6 +23,7 @@ type TranscriptWithChild = Transcript & {
 
 type FilterChildOption = { value: string; label: string };
 
+// Displays the list of transcripts for a project and includes pagination and filtering by children
 export const Transcripts = () => {
     const [transcripts, setTranscripts] = useState<PaginatedResults<TranscriptWithChild>>();
     const [currentChildren, setCurrentChildren] = useState<FilterChildOption[]>([]);
@@ -58,6 +59,7 @@ export const Transcripts = () => {
         loadProject();
     }, [project, getProjectChildren]);
 
+    // Fetches list of transcripts and applies filter on children if specified
     const getTranscripts = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
             if (project === undefined) {

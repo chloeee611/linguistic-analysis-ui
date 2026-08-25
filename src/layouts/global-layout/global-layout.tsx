@@ -13,13 +13,16 @@ import clsx from "clsx";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
+// Renders the global layout for the application, including the navigation menu and main content area
 export const NavMenu = () => {
     const { pathname } = useLocation();
     const { user, logout } = useUser();
 
     const current = useMemo(() => `/${pathname.split("/")[1]}`, [pathname]);
 
-    const items: MenuItem[] = useMemo(
+    console.log(`global-layout.tsx:23 || user: `, user);
+
+    const items = useMemo<MenuItem[]>(
         () => [
             {
                 key: "/home",
@@ -41,9 +44,10 @@ export const NavMenu = () => {
                 icon: <LogoutOutlined />,
                 label: <NavLink to="/login">Logout</NavLink>,
                 onClick: logout,
+                className: clsx({ [styles.hidden]: !user?.id }),
             },
         ],
-        [logout]
+        [logout, user?.id]
     );
 
     return (

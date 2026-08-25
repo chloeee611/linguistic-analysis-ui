@@ -2,6 +2,7 @@ import { Paragraph } from "@/components/paragraph";
 
 import styles from "./landing.module.scss";
 
+// Renders the landing page to show a heading, description, and image
 export const Landing = () => {
     return (
         <div className={styles.container}>

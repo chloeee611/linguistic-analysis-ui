@@ -1,3 +1,9 @@
+/**
+ * Defines the types related to analysis results for KWAL, MLU, FREQ, and LEXRARE.
+ * Each analysis type has its own specific result structure, and AnalysisResult joins these result types together.
+ * AnalysisArgs defines the expected arguments for each analysis method.
+ */
+
 export type AnalysisType = "kwal" | "mlu" | "freq" | "lexrare";
 
 export type LexRareResult = {

@@ -9,6 +9,7 @@ import { useUser } from "@/hooks/user.hooks";
 import { useApi } from "@/hooks/api.hooks";
 import { Spin } from "@/components/spin";
 
+// Displays the details of a specific transcript including metadata and content
 export const TranscriptDetails = () => {
     const { transcriptId } = useParams();
 
@@ -32,6 +33,7 @@ export const TranscriptDetails = () => {
         setTranscript(data);
     }, [project, transcriptId, token, callApi]);
 
+    // Fetches content of transcript and includes pagination functionality
     const getTranscriptContent = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
             if (!project) {

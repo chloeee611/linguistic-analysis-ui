@@ -12,6 +12,7 @@ import { Spin } from "@/components/spin";
 
 import styles from "./results.module.scss";
 
+// Defines available analysis types for filtering
 const ANALYSIS_TYPES: { value: AnalysisType; label: string }[] = [
     { value: "kwal", label: "kwal" },
     { value: "mlu", label: "mlu" },
@@ -26,6 +27,7 @@ type AnalysisItem = {
     transcript_count: string;
 };
 
+// Defines the columns for the results table
 const columns: TableProps<AnalysisItem>["columns"] = [
     {
         title: "Link",
@@ -50,6 +52,7 @@ const columns: TableProps<AnalysisItem>["columns"] = [
     },
 ];
 
+//  Displays the results table for the project
 export const Results = () => {
     const [results, setResults] = useState<PaginatedResults<AnalysisItem>>();
     const [currentAnalysisFilter, setCurrentAnalysisFilter] = useState<AnalysisType[]>([]);
@@ -58,6 +61,7 @@ export const Results = () => {
     const { project } = useProject();
     const { loading, callApi } = useApi();
 
+    // Fetches the analysis results for the project and allows filtering by analysis type
     const fetchStats = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
             if (!project) {

@@ -4,6 +4,7 @@ import { api, handleError } from "@/api/api";
 import { User, UserJWT } from "@/model/user.types";
 import { AxiosError } from "axios";
 
+// Defines the shape of the user context properties
 export type UserContextProps = {
     user: User | undefined;
     token: string | null;
@@ -11,6 +12,7 @@ export type UserContextProps = {
     logout: () => void;
 };
 
+// Provides a context for managing the current user state and authentication
 export const UserContext = createContext<UserContextProps>({
     user: undefined,
     token: null,
@@ -18,6 +20,7 @@ export const UserContext = createContext<UserContextProps>({
     logout: () => {},
 });
 
+// Component for UserContext that manages the current user state and authentication
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User>();
     const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
@@ -32,6 +35,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setToken(null);
     }, []);
 
+    // Fetches the current user data when the token changes and updates the user state
     useEffect(() => {
         const getCurrentUser = async () => {
             try {

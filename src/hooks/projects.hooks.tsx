@@ -10,8 +10,10 @@ export type ProjectContextProps = {
     project: Project | undefined;
 };
 
+// Provides a context for managing the current project state and fetching project data
 export const ProjectContext = createContext<ProjectContextProps>({ project: undefined });
 
+// Component for ProjectContext that fetches and manages the current project state
 export const ProjectProvider = ({ children }: { children: ReactNode }) => {
     const { projectId } = useParams();
 

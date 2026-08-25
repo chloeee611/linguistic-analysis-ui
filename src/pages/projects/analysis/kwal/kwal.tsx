@@ -18,6 +18,7 @@ import { Spin } from "@/components/spin";
 
 import styles from "./kwal.module.scss";
 
+// Defines the title and content for the three steps of the KWAL analysis
 const stepItems = [
     {
         title: "Choose Transcripts",
@@ -39,6 +40,7 @@ type KwalForm = {
     mor_filters: string;
 };
 
+// Displays the KWAL analysis page which allows users to select transcripts, add search terms, and finalise details before submitting the analysis
 export const Kwal = () => {
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [searches, setSearches] = useState<Record<keyof KwalForm, string | undefined>>({
@@ -55,6 +57,7 @@ export const Kwal = () => {
     const { callApi } = useApi();
     const navigate = useNavigate();
 
+    // Fetches the list of transcripts for the project and updates the state with the results
     const loadTranscripts = useCallback(
         async (page: number = 1, pageSize: number = 25) => {
             if (!project) {
@@ -92,6 +95,7 @@ export const Kwal = () => {
         loadTranscripts();
     }, [loadTranscripts]);
 
+    // Handles selection/deselection of transcripts when a card is clicked and updates the selectedTranscripts state
     const onCardClick = (id: string) => {
         if (Object.keys(transcriptsLookup).length === 0) {
             return;
@@ -106,6 +110,7 @@ export const Kwal = () => {
         }
     };
 
+    // Handles selection/deselection of all transcripts when the relevant button is clicked
     const onSelectedAll = () => {
         if (Object.keys(transcriptsLookup).length === 0) {
             return;
@@ -122,6 +127,7 @@ export const Kwal = () => {
         setSelectedTranscripts({});
     };
 
+    // Submits the KWAL analysis request with the selected transcripts and search terms, then navigates to the analysis results page on completion
     const onSubmit = async () => {
         if (!project) {
             return;
@@ -144,6 +150,7 @@ export const Kwal = () => {
         navigate(`/projects/${project.id}/analysis/${data.id}`);
     };
 
+    // Defines the fields for the search terms input form
     const fields = useMemo<Field<KwalForm>[]>(
         () => [
             {
@@ -173,6 +180,7 @@ export const Kwal = () => {
         []
     );
 
+    // Determines whether the "Next Step" button should be disabled based on the current step and selected transcripts
     const nextDisabled = useMemo(() => {
         switch (currentStep) {
             case 0:
@@ -186,6 +194,7 @@ export const Kwal = () => {
         return <Spin />;
     }
 
+    // Renders the content for the current step of the KWAL analysis process
     const CurrentTab = () => {
         const data = [
             {

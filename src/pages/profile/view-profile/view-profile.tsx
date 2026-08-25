@@ -16,6 +16,7 @@ type Field = {
     property: keyof User;
 };
 
+// Defines the fields in the user profile page
 const fields: Field[] = [
     { label: "Name", property: "name" },
     { label: "Username", property: "username" },
@@ -26,6 +27,7 @@ const fields: Field[] = [
     { label: "Location", property: "location" },
 ];
 
+// Displays the user profile page with user information and an edit button
 export const ViewProfile = () => {
     const [user, setUser] = useState<User>();
     const { token } = useUser();

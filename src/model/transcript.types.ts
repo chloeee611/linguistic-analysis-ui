@@ -1,3 +1,5 @@
+// Defines the types related to transcripts and their associated data
+
 export type Transcript = {
     id: string;
     project_id: string;

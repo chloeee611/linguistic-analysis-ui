@@ -15,6 +15,7 @@ const regex = /^\/projects\/\d+(?<route>\/(.*?))(?:\/(.*?))?$/i;
 export const ProjectMenu = () => {
     const { pathname } = useLocation();
 
+    // Get the current project route
     const current = useMemo(() => {
         const regexMatch = pathname.match(regex);
         return regexMatch?.groups?.["route"] ?? "/";
@@ -22,6 +23,7 @@ export const ProjectMenu = () => {
 
     const { project } = useProject();
 
+    // List of menu items in the projects sub-menu
     const projectItems = useMemo<MenuItem[]>(() => {
         if (project === undefined) {
             return [];

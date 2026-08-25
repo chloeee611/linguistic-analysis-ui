@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { api, handleError } from "@/api/api";
 import { useNavigate } from "react-router";
 
+// Provides a custom hook for making API calls with loading state management and error handling
 export const useApi = () => {
     const [loading, setLoading] = useState(true);
 

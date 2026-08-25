@@ -21,6 +21,7 @@ import { Home } from "./pages/home";
 
 import "./App.css";
 
+// Defines the routing structure for the application
 function Router() {
     return (
         <Routes>

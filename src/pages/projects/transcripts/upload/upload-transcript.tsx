@@ -16,8 +16,10 @@ import { api } from "@/api/api";
 
 import styles from "./upload-transcript.module.scss";
 
+// Required for the antd Upload component to work with TypeScript, as it expects a specific type for the file parameter in the beforeUpload function
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
+// Determines the current step and status of the upload process
 const getUploadStatus = (
     currentStatus: TranscriptUploadTask["status"],
     fileCount: number
@@ -40,6 +42,7 @@ const getUploadStatus = (
     }
 };
 
+// Handles the upload of transcripts to the project which includes selecting files and assigning to a child
 export const UploadTranscript = () => {
     const [total, setTotal] = useState<number>();
     const [progress, setProgress] = useState<number>();
@@ -66,6 +69,7 @@ export const UploadTranscript = () => {
             return;
         }
 
+        // Creates FormData object which sends the file data and child_id to Express API
         const formData = new FormData(event.target);
         formData.append("child_id", currentChild);
         fileList.forEach((file) => {
@@ -84,6 +88,7 @@ export const UploadTranscript = () => {
         }
     };
 
+    // Determines the text to display based on upload status
     const statusText = useMemo(() => {
         switch (uploadStatus) {
             case "running":
@@ -114,6 +119,7 @@ export const UploadTranscript = () => {
         getChildren();
     }, [project, token]);
 
+    // Tests the status of the upload task every second and updates the progress and total number of transcripts uploaded
     useEffect(() => {
         if (!taskLocation) {
             return;
@@ -156,6 +162,7 @@ export const UploadTranscript = () => {
         return <Spin />;
     }
 
+    // Defines the properties for the Upload component
     const uploadProps: UploadProps = {
         onRemove: (file) => {
             const index = fileList.indexOf(file);

@@ -17,6 +17,7 @@ type ProjectSummaryReturn = {
     colourKeys: Record<string, string>;
 };
 
+// Formats age label to display as a decimal in the x-axis of the charts
 const formatAgeLabel = (value: string) => {
     const [year, rest] = value.split(";");
     const [month, day] = rest.split(".");
@@ -31,6 +32,7 @@ const formatAgeLabel = (value: string) => {
     return `${(yearNumber + totalDays / 365).toFixed(2)}`;
 };
 
+// Displays the project dashboard using the recharts library
 export const ProjectDashboard = () => {
     const [projectSummary, setProjectSummary] = useState<ProjectSummaryReturn>();
 
