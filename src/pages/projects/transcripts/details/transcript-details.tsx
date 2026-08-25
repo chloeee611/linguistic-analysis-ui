@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
 import { Transcript, TranscriptContentUtterance } from "@/model/transcript.types";
+import { useCallback, useEffect, useState } from "react";
 import { PaginatedResults } from "@/model/pagination.types";
 import { Pagination } from "@/components/pagination";
 import { useProject } from "@/hooks/projects.hooks";

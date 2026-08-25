@@ -1,32 +1,43 @@
+import { User, UserJWT } from "../../model/user.types";
 import { SubmitEvent } from "react";
 import { useNavigate } from "react-router";
-import { UserJWT } from "../../model/user.types";
 import { Heading } from "@/components/heading";
 import { Button } from "../../components/button";
 import { Input } from "../../components/input";
+import { Field } from "@/model/form.types";
+import { Form } from "antd";
 import { api } from "../../api/api";
 
 import styles from "./register.module.scss";
-import { Form } from "antd";
 
-const inputs = [
+const inputs: Field<User>[] = [
     {
-        id: "name",
+        property: "name",
         label: "Name",
+        type: "text",
     },
     {
-        id: "username",
+        property: "username",
         label: "Username",
+        type: "text",
+        rules: [{ min: 3, max: 15, message: "Username must be 3-15 characters long" }],
     },
     {
-        id: "email",
+        property: "email",
         label: "Email",
         type: "email",
     },
     {
-        id: "password",
+        property: "password",
         label: "Password",
         type: "password",
+        rules: [
+            { min: 8, message: "Password must have a minimum length of 8" },
+            {
+                pattern: new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/),
+                message: "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+            },
+        ],
     },
 ];
 
@@ -41,7 +52,7 @@ export const Register = () => {
 
             if (status === 201) {
                 navigate("/login");
-            } // TODO handle error if register fails
+            }
         } catch (error) {
             console.error("Could not load users", error);
         }
@@ -50,9 +61,13 @@ export const Register = () => {
     return (
         <div className={styles.container}>
             <Heading level={1}>Register</Heading>
-            <Form onFinish={callRegister} layout="vertical">
-                {inputs.map(({ id, label, type }) => (
-                    <Form.Item name={id} label={label} rules={[{ required: true, message: `${id} is required` }]}>
+            <Form onFinish={callRegister} layout="vertical" style={{ width: 600 }}>
+                {inputs.map(({ property, label, type, rules }) => (
+                    <Form.Item
+                        name={property}
+                        label={label}
+                        rules={[{ required: true, message: `${property} is required` }, ...(rules ?? [])]}
+                    >
                         <Input type={type} />
                     </Form.Item>
                 ))}

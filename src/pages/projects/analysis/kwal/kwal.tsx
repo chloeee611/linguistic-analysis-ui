@@ -12,7 +12,7 @@ import { useApi } from "@/hooks/api.hooks";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
 import { Field } from "@/model/form.types";
-import { Steps } from "antd";
+import { Steps, Table } from "antd";
 import { Card } from "@/components/card";
 import { Spin } from "@/components/spin";
 
@@ -133,8 +133,8 @@ export const Kwal = () => {
             data: {
                 project_id: project.id,
                 search_utterance: [searches.search_utterance],
-                mor_filters: [searches.mor_filters],
-                gra_filters: [searches.gra_filters],
+                mor_filters: [searches.mor_filters ?? ""],
+                gra_filters: [searches.gra_filters ?? ""],
                 transcripts: Object.values(selectedTranscripts).map(({ id, file_url }) => ({ id, file_url })),
             },
 
@@ -187,6 +187,25 @@ export const Kwal = () => {
     }
 
     const CurrentTab = () => {
+        const data = [
+            {
+                setting: "Number of Transcripts",
+                value: Object.keys(selectedTranscripts).length,
+            },
+            {
+                setting: "Utterance Search",
+                value: searches.search_utterance ?? "-",
+            },
+            {
+                setting: "MOR Search",
+                value: searches.mor_filters ?? "-",
+            },
+            {
+                setting: "GRA Search",
+                value: searches.gra_filters ?? "-",
+            },
+        ];
+
         switch (currentStep) {
             case 0:
                 return (
@@ -225,7 +244,7 @@ export const Kwal = () => {
                 );
             case 1:
                 return (
-                    <div>
+                    <div className={styles.inputContainer}>
                         {fields.map(({ label, property, onChange }) => (
                             <div className={styles.field}>
                                 <Label htmlFor={property}>{label}</Label>
@@ -236,12 +255,12 @@ export const Kwal = () => {
                 );
             case 2:
                 return (
-                    <div>
+                    <div className={styles.inputContainer}>
                         <Heading level={2}>Search Settings</Heading>
-                        <Paragraph>{Object.keys(selectedTranscripts).length} Transcripts</Paragraph>
-                        <Paragraph>Utterance Search: {searches.search_utterance}</Paragraph>
-                        <Paragraph>MOR Tier Search: {searches.mor_filters ?? "None"}</Paragraph>
-                        <Paragraph>GRA Tier Search: {searches.gra_filters ?? "None"}</Paragraph>
+                        <Table dataSource={data} pagination={false}>
+                            <Table.Column width="40%" title="Setting" dataIndex="setting" key="setting" />
+                            <Table.Column width="60%" title="Value" dataIndex="value" key="value" />
+                        </Table>
                     </div>
                 );
         }

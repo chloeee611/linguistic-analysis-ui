@@ -40,7 +40,7 @@ export const Login = () => {
     return (
         <div className={styles.container}>
             <Heading level={1}>Login</Heading>
-            <Form onFinish={callLogin} layout="vertical">
+            <Form onFinish={callLogin} layout="vertical" style={{ width: 600 }}>
                 {inputs.map(({ id, label, type }) => (
                     <Form.Item name={id} label={label} rules={[{ required: true, message: `${id} is required` }]}>
                         <Input type={type} />
