@@ -1,5 +1,5 @@
 import { Form, GetProp, Progress, Select, Steps, Upload, UploadFile, UploadProps } from "antd";
-import { SubmitEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TranscriptUploadTask } from "@/model/task.types";
 import { UploadOutlined } from "@ant-design/icons";
 import { BaseStepsProps } from "antd/es/steps";
@@ -56,9 +56,7 @@ export const UploadTranscript = () => {
     const { token } = useUser();
     const { project } = useProject();
 
-    const callUploadTranscript = async (event: SubmitEvent) => {
-        event.preventDefault(); // Stop page from refreshing
-
+    const callUploadTranscript = async () => {
         if (!project) {
             console.error("Error with project ID");
             return;
@@ -70,7 +68,7 @@ export const UploadTranscript = () => {
         }
 
         // Creates FormData object which sends the file data and child_id to Express API
-        const formData = new FormData(event.target);
+        const formData = new FormData();
         formData.append("child_id", currentChild);
         fileList.forEach((file) => {
             formData.append("uploaded_file", file as FileType);
