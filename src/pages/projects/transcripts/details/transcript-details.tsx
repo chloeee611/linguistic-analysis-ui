@@ -1,13 +1,17 @@
 import { Transcript, TranscriptContentUtterance } from "@/model/transcript.types";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import { PaginatedResults } from "@/model/pagination.types";
 import { Pagination } from "@/components/pagination";
 import { useProject } from "@/hooks/projects.hooks";
-import { useParams } from "react-router";
+import { Popconfirm } from "antd";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
+import { Button } from "@/components/button";
 import { useApi } from "@/hooks/api.hooks";
 import { Spin } from "@/components/spin";
+
+import styles from "./transcript-details.module.scss";
 
 // Displays the details of a specific transcript including metadata and content
 export const TranscriptDetails = () => {
@@ -16,6 +20,7 @@ export const TranscriptDetails = () => {
     const [transcript, setTranscript] = useState<Transcript>();
     const [transcriptContent, setTranscriptContent] = useState<PaginatedResults<TranscriptContentUtterance>>();
 
+    const navigate = useNavigate();
     const { token } = useUser();
     const { project } = useProject();
     const { loading, callApi } = useApi();
@@ -55,6 +60,23 @@ export const TranscriptDetails = () => {
         [project, transcriptId, token, callApi]
     );
 
+    // Deletes the current transcript
+    const deleteTranscript = useCallback(async () => {
+        if (!project) {
+            return;
+        }
+
+        const { status } = await callApi({
+            method: "DELETE",
+            url: `/projects/${project.id}/transcripts/${transcriptId}`,
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (status === 200) {
+            navigate(`/projects/${project.id}/transcripts`);
+        }
+    }, [project, transcriptId, token, callApi, navigate]);
+
     useEffect(() => {
         const loadTranscript = async () => {
             await getTranscript();
@@ -74,7 +96,19 @@ export const TranscriptDetails = () => {
 
     return (
         <div>
-            <Heading level={1}>Transcript</Heading>
+            <div className={styles.header}>
+                <Heading level={1}>Transcript</Heading>
+                <Popconfirm
+                    title="Delete the transcript"
+                    description="Are you sure you want to delete this?"
+                    onConfirm={deleteTranscript}
+                    okText="Yes"
+                    cancelText="No"
+                    placement="left"
+                >
+                    <Button type="danger">Delete</Button>
+                </Popconfirm>
+            </div>
             {transcript && <div key={transcript.id}>{transcript.file_url}</div>}
             {transcript?.metadata && (
                 <table>

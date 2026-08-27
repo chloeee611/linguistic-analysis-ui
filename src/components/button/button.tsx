@@ -5,7 +5,7 @@ import styles from "./button.module.scss";
 import clsx from "clsx";
 
 type ButtonProps = Omit<EButtonProps, "type"> & {
-    type?: "primary" | "secondary" | "outline" | "ghost";
+    type?: "primary" | "secondary" | "outline" | "ghost" | "danger";
     gradient?: boolean;
 };
 

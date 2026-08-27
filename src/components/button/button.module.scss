@@ -85,6 +85,25 @@
         }
     }
 
+    &.danger {
+        --text-color: var(--text-light-primary);
+        --top-color: var(--danger-accent-primary);
+        --bottom-color: var(--danger-accent-secondary);
+
+        &:hover {
+            --text-color: var(--text-light-secondary);
+            --top-color: var(--danger-accent-secondary);
+            --bottom-color: var(--danger-accent-tertiary);
+        }
+
+        &:disabled {
+            --text-color: var(--text-tertiary);
+            --top-color: var(--bg-color-tertiary);
+            border: 1px solid var(--text-tertiary) !important;
+            --bottom-color: var(--danger-accent-tertiary);
+        }
+    }
+
     & &.small {
     }
 
