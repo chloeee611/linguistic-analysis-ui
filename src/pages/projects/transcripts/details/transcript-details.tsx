@@ -1,10 +1,11 @@
-import { Transcript, TranscriptContentUtterance } from "@/model/transcript.types";
+import { Transcript, TranscriptContentUtterance, TranscriptMetadata } from "@/model/transcript.types";
+import { Collapse, Descriptions, Popconfirm } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { PaginatedResults } from "@/model/pagination.types";
+import { parseMetadata } from "./transcript-details.helpers";
 import { Pagination } from "@/components/pagination";
 import { useProject } from "@/hooks/projects.hooks";
-import { Popconfirm } from "antd";
 import { Heading } from "@/components/heading";
 import { useUser } from "@/hooks/user.hooks";
 import { Button } from "@/components/button";
@@ -95,7 +96,7 @@ export const TranscriptDetails = () => {
     }
 
     return (
-        <div>
+        <div className={styles.container}>
             <div className={styles.header}>
                 <Heading level={1}>Transcript</Heading>
                 <Popconfirm
@@ -109,18 +110,27 @@ export const TranscriptDetails = () => {
                     <Button type="danger">Delete</Button>
                 </Popconfirm>
             </div>
-            {transcript && <div key={transcript.id}>{transcript.file_url}</div>}
             {transcript?.metadata && (
-                <table>
-                    <tbody>
-                        {Object.entries(transcript.metadata).map(([key, value]) => (
-                            <tr key={key}>
-                                <td>{key}</td>
-                                <td>{JSON.stringify(value)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <Collapse
+                    defaultActiveKey={["metadata"]}
+                    items={[
+                        {
+                            key: "metadata",
+                            label: "Summary",
+                            children: (
+                                <Descriptions
+                                    bordered
+                                    items={Object.keys(transcript.metadata).map((key) => ({
+                                        key,
+                                        label: key,
+                                        // Object.entries loses the type context, needs added again
+                                        children: parseMetadata(key as keyof TranscriptMetadata, transcript.metadata),
+                                    }))}
+                                />
+                            ),
+                        },
+                    ]}
+                />
             )}
             {transcriptContent && !loading && (
                 <div>
