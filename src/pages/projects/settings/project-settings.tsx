@@ -75,7 +75,7 @@ export const ProjectSettings = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            if (status === 201) {
+            if (status === 200) {
                 console.log("Project edited successfully");
                 navigate(`/projects/${data.id}`);
             }

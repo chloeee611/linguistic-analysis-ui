@@ -44,6 +44,7 @@ const columns: TableProps<AnalysisItem>["columns"] = [
         title: "Run Date",
         dataIndex: "created_at",
         key: "created_at",
+        render: (created_at) => new Date(created_at).toUTCString(),
     },
     {
         title: "No. of Transcripts",
