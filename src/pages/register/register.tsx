@@ -1,5 +1,4 @@
 import { User, UserJWT } from "../../model/user.types";
-import { SubmitEvent } from "react";
 import { useNavigate } from "react-router";
 import { Heading } from "@/components/heading";
 import { Button } from "../../components/button";
@@ -47,10 +46,8 @@ export const Register = () => {
     const navigate = useNavigate();
 
     // Handles registration by sending POST request to Express API and navigates to login page if successful
-    const callRegister = async (event: SubmitEvent) => {
+    const callRegister = async (formObject: User) => {
         try {
-            event.preventDefault();
-            const formObject = Object.fromEntries(new FormData(event.target).entries());
             const { status } = await api.post<UserJWT>("/register", formObject);
 
             if (status === 201) {
