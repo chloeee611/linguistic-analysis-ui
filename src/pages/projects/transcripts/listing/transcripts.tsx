@@ -116,16 +116,20 @@ export const Transcripts = () => {
                         options={currentChildren}
                     />
                     <div className={styles.listingGrid}>
-                        {transcripts.results.map(({ id, title, child_name, metadata }) => (
-                            <Card
-                                key={id}
-                                title={title}
-                                onClick={() => navigate(`/projects/${project.id}/transcripts/${id}`)}
-                            >
-                                <Paragraph>Child: {child_name}</Paragraph>
-                                <Paragraph>Date: {new Date(metadata.date).toLocaleDateString()}</Paragraph>
-                            </Card>
-                        ))}
+                        {transcripts.results.map(({ id, title, child_name, metadata }) => {
+                            const date = Date.parse(metadata.date);
+
+                            return (
+                                <Card
+                                    key={id}
+                                    title={title}
+                                    onClick={() => navigate(`/projects/${project.id}/transcripts/${id}`)}
+                                >
+                                    <Paragraph>Child: {child_name}</Paragraph>
+                                    <Paragraph>Date: {date ? new Date(date).toLocaleDateString() : "-"}</Paragraph>
+                                </Card>
+                            );
+                        })}
                     </div>
                     <Pagination
                         current={transcripts.meta.page}
